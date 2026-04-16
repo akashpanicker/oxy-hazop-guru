@@ -13,7 +13,21 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+      },
       colors: {
+        oxy: {
+          blue: '#00539B',
+          blueHover: '#003D73',
+          dark: '#1A1A1A',
+          grayText: '#4A4A4A',
+          bg: '#F5F7FA',
+          green: '#2D7D46',
+          amber: '#F59E0B',
+          red: '#DC2626',
+          border: '#D1D5DB'
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

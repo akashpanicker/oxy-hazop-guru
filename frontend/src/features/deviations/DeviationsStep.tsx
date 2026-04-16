@@ -1,21 +1,26 @@
 import { useHazopStore } from '@/store/useHazopStore';
-import { ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
-import { useState } from 'react';
-import axios from 'axios';
+import { Loader2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Checkbox } from '@/components/ui/Checkbox';
 
 export function DeviationsStep() {
   const { 
-    extractedItems, 
     selectedDeviations, 
     setSelectedDeviations,
     otherDeviation,
     setOtherDeviation,
     setStep,
-    setCauses
   } = useHazopStore();
   
   const [isLoading, setIsLoading] = useState(false);
   const DEVIATION_OPTIONS = ['High Pressure', 'Low Pressure', 'High Flow', 'Low Flow', 'High Temperature', 'Low Temperature'];
+
+  useEffect(() => {
+    if (selectedDeviations.length === 0) {
+      setSelectedDeviations(['High Pressure']);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleToggleDeviation = (dev: string) => {
     setSelectedDeviations(
@@ -25,94 +30,112 @@ export function DeviationsStep() {
     );
   };
 
-  const generateCauses = async () => {
+  const generateReport = async () => {
     setIsLoading(true);
     try {
-      const payload = {
-        deviations: selectedDeviations,
-        other_text: otherDeviation
-      };
-      
-      // Save deviations first
-      await axios.post('/api/submit-deviations', payload);
-      
-      // Request causes generation from Claude
-      const response = await axios.post('/api/generate-causes', payload);
-      setCauses(response.data.causes);
-      
-      setStep('causes');
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      setStep('report');
     } catch (error) {
       console.error(error);
-      alert('Failed to generate causes');
+      alert('Failed to generate report');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="w-full max-w-[1200px] mx-auto px-8 lg:px-12 py-8 bg-oxy-bg min-h-[calc(100vh-64px)] relative flex flex-col">
       
-      <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-        <h2 className="text-xl font-semibold mb-4">Extracted Node Definition</h2>
-        <div className="bg-slate-50 p-4 rounded-xl font-mono text-sm border border-slate-200">
-           {/* Preview of extracted items could go here */}
-           <p className="text-slate-600">Successfully extracted {extractedItems?.instruments_causes?.length || 0} instruments.</p>
+      {/* Equipment Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
+        <div className="bg-white border-2 border-[#E5E7EB] rounded-lg p-6 text-center transition-all duration-200 hover:border-oxy-blue hover:-translate-y-1 hover:shadow-[0_4px_12px_rgba(0,83,155,0.1)]">
+          <div className="text-[32px] mb-2">⚙️</div>
+          <div className="text-[36px] font-bold text-oxy-blue mb-1 leading-none">1</div>
+          <div className="text-[14px] font-medium text-slate-500">Major Equipment</div>
+        </div>
+        <div className="bg-white border-2 border-[#E5E7EB] rounded-lg p-6 text-center transition-all duration-200 hover:border-oxy-blue hover:-translate-y-1 hover:shadow-[0_4px_12px_rgba(0,83,155,0.1)]">
+          <div className="text-[32px] mb-2">🔧</div>
+          <div className="text-[36px] font-bold text-oxy-blue mb-1 leading-none">4</div>
+          <div className="text-[14px] font-medium text-slate-500">Instruments</div>
+        </div>
+        <div className="bg-white border-2 border-[#E5E7EB] rounded-lg p-6 text-center transition-all duration-200 hover:border-oxy-blue hover:-translate-y-1 hover:shadow-[0_4px_12px_rgba(0,83,155,0.1)]">
+          <div className="text-[32px] mb-2">🛡️</div>
+          <div className="text-[36px] font-bold text-oxy-blue mb-1 leading-none">10</div>
+          <div className="text-[14px] font-medium text-slate-500">Safety Devices</div>
         </div>
       </div>
-
-      <div className="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
-        <div className="p-8 border-b border-slate-100 bg-slate-50/50">
-          <h2 className="text-2xl font-semibold text-slate-800">Select Deviations</h2>
-          <p className="text-slate-500 mt-2">Which deviations would you like to analyze for this node?</p>
+      
+      <div className="relative">
+        {/* Selection Counter */}
+        <div className="absolute top-2 right-4 text-[14px] text-slate-500 hidden sm:block">
+          <span className="font-bold text-[18px] text-oxy-blue">{selectedDeviations.length + (otherDeviation ? 1 : 0)}</span> of 6 deviations selected
         </div>
 
-        <div className="p-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {DEVIATION_OPTIONS.map(dev => (
-              <label 
-                key={dev} 
-                className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-colors ${selectedDeviations.includes(dev) ? 'border-blue-500 bg-blue-50/50' : 'border-slate-200 hover:border-slate-300'}`}
-              >
-                <input 
-                  type="checkbox" 
-                  className="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-                  checked={selectedDeviations.includes(dev)}
-                  onChange={() => handleToggleDeviation(dev)}
-                />
-                <span className="font-medium text-slate-700">{dev}</span>
-              </label>
-            ))}
+        {/* Section Header */}
+        <div className="mb-6">
+          <div className="flex items-center gap-3 mb-2">
+            <h2 className="text-[24px] font-semibold text-oxy-dark">Select Deviations</h2>
+            <span className="bg-[#FEF3C7] text-[#92400E] px-3 py-1 rounded-full text-[12px] font-medium">At least 1 required</span>
           </div>
-          
-          <div className="mt-8">
-            <label className="block text-sm font-medium text-slate-700 mb-2">Other Deviation (Optional)</label>
-            <input 
-              type="text" 
-              className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow"
-              placeholder="e.g. Reverse Flow, No Flow"
-              value={otherDeviation}
-              onChange={(e) => setOtherDeviation(e.target.value)}
+          <p className="text-[16px] text-slate-500">Which deviations would you like to analyze for this node?</p>
+        </div>
+
+        {/* Deviation Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
+          {DEVIATION_OPTIONS.map(dev => (
+            <Checkbox
+              key={dev}
+              label={dev}
+              checked={selectedDeviations.includes(dev)}
+              onChange={() => handleToggleDeviation(dev)}
             />
-          </div>
+          ))}
+        </div>
+        
+        {/* Other Deviation Input */}
+        <div className="mb-8">
+          <label className="block text-[14px] font-medium text-oxy-dark mb-2">Other Deviation (Optional)</label>
+          <input 
+            type="text" 
+            className="w-full p-[14px_16px] text-[16px] border-2 border-[#E5E7EB] rounded-lg transition-all duration-150 focus:outline-none focus:border-oxy-blue focus:shadow-[0_0_0_3px_rgba(0,83,155,0.1)] placeholder:text-slate-400"
+            placeholder="e.g., Reverse Flow, As Well As, Composition Change"
+            value={otherDeviation}
+            onChange={(e) => setOtherDeviation(e.target.value)}
+          />
+        </div>
 
-          <div className="mt-10 flex justify-between pt-6 border-t border-slate-100">
-            <button
-              onClick={() => setStep('upload')}
-              className="text-slate-600 hover:text-slate-900 px-4 py-2 font-medium flex items-center gap-2"
-            >
-              <ArrowLeft size={18} /> Back
-            </button>
-            <button
-              onClick={generateCauses}
-              disabled={isLoading || (selectedDeviations.length === 0 && !otherDeviation)}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg font-medium transition-colors disabled:opacity-50 flex items-center gap-2 shadow-sm"
-            >
-              {isLoading ? <Loader2 size={18} className="animate-spin" /> : 'Generate Causes'}
-              {!isLoading && <ArrowRight size={18} />}
-            </button>
-          </div>
+      </div>
+      
+      {/* Bottom Action Bar */}
+      <div className="fixed bottom-0 right-0 h-[72px] bg-white border-t-2 border-[#E5E7EB] flex items-center justify-between px-12 z-[800] left-[240px] max-lg:left-0 shadow-[0_-2px_8px_rgba(0,0,0,0.04)]">
+        <div className="flex items-center gap-4">
+          <Button variant="outline" onClick={() => setStep('equipment')}>
+            ← Back
+          </Button>
+        </div>
+        
+        <div className="flex items-center gap-4 text-sm text-slate-500 font-medium">
+          <span>Step 4 of 5</span>
+          <span>•</span>
+          <span>Select Deviations</span>
+        </div>
+        
+        <div className="flex items-center gap-4">
+          <Button
+            onClick={generateReport}
+            disabled={isLoading || (selectedDeviations.length === 0 && !otherDeviation)}
+            className="min-w-[180px]"
+          >
+            {isLoading ? <Loader2 size={16} className="animate-spin" /> : 'Continue to Analysis →'}
+          </Button>
         </div>
       </div>
+      
+      {/* Footer */}
+      <footer className="text-center p-[24px] text-[#9CA3AF] text-[12px] mt-12 mb-auto">
+        HAZOP P&ID Analysis Engine © 2026
+      </footer>
+
     </div>
   );
 }

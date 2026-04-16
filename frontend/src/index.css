@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -71,6 +73,13 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    background-color: #F5F7FA;
+    color: #1A1A1A;
+    @apply font-sans;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    color: #1A1A1A;
+    @apply font-semibold tracking-tight;
   }
 }
+

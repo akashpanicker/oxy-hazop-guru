@@ -11,8 +11,8 @@ export interface AnalysisParams {
 }
 
 interface HazopState {
-  step: 'upload' | 'deviations' | 'causes' | 'worksheet';
-  setStep: (step: 'upload' | 'deviations' | 'causes' | 'worksheet') => void;
+  step: 'login' | 'dashboard' | 'facility' | 'nodes' | 'equipment' | 'deviations' | 'report';
+  setStep: (step: 'login' | 'dashboard' | 'facility' | 'nodes' | 'equipment' | 'deviations' | 'report') => void;
   
   extractedItems: any | null;
   setExtractedItems: (items: any) => void;
@@ -42,7 +42,7 @@ interface HazopState {
 }
 
 export const useHazopStore = create<HazopState>((set) => ({
-  step: 'upload',
+  step: 'login',
   setStep: (step) => set({ step }),
   
   extractedItems: null,
@@ -70,7 +70,7 @@ export const useHazopStore = create<HazopState>((set) => ({
   setAnalysisParams: (analysisParams) => set({ analysisParams }),
 
   reset: () => set({
-    step: 'upload',
+    step: 'login',
     extractedItems: null,
     pdfFilename: null,
     selectedDeviations: [],

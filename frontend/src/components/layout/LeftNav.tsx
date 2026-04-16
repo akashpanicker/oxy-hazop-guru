@@ -1,0 +1,48 @@
+import React from 'react';
+import { useHazopStore } from '@/store/useHazopStore';
+
+const steps = [
+  { id: 'facility', number: 1, label: 'Select Facility' },
+  { id: 'nodes', number: 2, label: 'Select Nodes' },
+  { id: 'equipment', number: 3, label: 'Review Equipment' },
+  { id: 'deviations', number: 4, label: 'Select Deviations' },
+  { id: 'report', number: 5, label: 'Generate Report' },
+];
+
+export function LeftNav() {
+  const { step } = useHazopStore();
+
+  const currentIndex = steps.findIndex(s => s.id === step);
+  
+  if (currentIndex === -1 && step !== 'report') return null; // Don't crash if step not found
+
+  return (
+    <aside className="fixed top-[60px] left-0 w-[240px] h-[calc(100vh-60px-72px)] bg-white border-r border-[#E5E7EB] py-6 overflow-y-auto z-[900]">
+      <ul className="list-none p-0 m-0">
+        {steps.map((s, idx) => {
+          const isActive = s.id === step;
+          const isCompleted = idx < currentIndex;
+          
+          return (
+            <li 
+              key={s.id} 
+              className={`px-6 py-3 flex items-center gap-3 cursor-pointer transition-all duration-150 border-l-[3px] 
+                ${isActive ? 'bg-[#EBF5FF] border-[#00539B]' : 'border-transparent hover:bg-[#F9FAFB]'} 
+                ${isCompleted ? 'text-[#6B7280]' : ''}
+              `}
+            >
+              <div className={`w-[28px] h-[28px] rounded-full flex items-center justify-center text-[14px] font-semibold shrink-0
+                ${isActive ? 'bg-[#00539B] text-white' : (isCompleted ? 'bg-[#2D7D46] text-white' : 'bg-[#E5E7EB] text-[#6B7280]')}`}
+              >
+                {isCompleted ? '✓' : s.number}
+              </div>
+              <span className={`text-[14px] font-medium ${isCompleted ? 'text-[#6B7280]' : 'text-[#1A1A1A]'}`}>
+                {s.label}
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+    </aside>
+  );
+}

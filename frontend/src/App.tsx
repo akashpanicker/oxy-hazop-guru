@@ -1,30 +1,25 @@
 import { AppLayout } from '@/components/layout/AppLayout';
 import { useHazopStore } from '@/store/useHazopStore';
-import { UploadStep } from '@/features/upload/UploadStep';
+import { LoginStep } from '@/features/auth/LoginStep';
+import { DashboardStep } from '@/features/dashboard/DashboardStep';
+import { FacilityStep } from '@/features/facility/FacilityStep';
+import { NodesStep } from '@/features/nodes/NodesStep';
+import { EquipmentStep } from '@/features/equipment/EquipmentStep';
 import { DeviationsStep } from '@/features/deviations/DeviationsStep';
-// Placeholder for the other steps you would create:
-// import { CausesStep } from '@/features/causes/CausesStep';
-// import { WorksheetStep } from '@/features/worksheet/WorksheetStep';
+import { ReportStep } from '@/features/report/ReportStep';
 
 export default function App() {
   const { step } = useHazopStore();
 
   return (
-    <AppLayout>
-      {/* Wizard Steps Logic */}
-      {step === 'upload' && <UploadStep />}
+    <AppLayout hideNav={step === 'login'}>
+      {step === 'login' && <LoginStep />}
+      {step === 'dashboard' && <DashboardStep />}
+      {step === 'facility' && <FacilityStep />}
+      {step === 'nodes' && <NodesStep />}
+      {step === 'equipment' && <EquipmentStep />}
       {step === 'deviations' && <DeviationsStep />}
-      
-      {/* 
-        {step === 'causes' && <CausesStep />}
-        {step === 'worksheet' && <WorksheetStep />}
-      */}
-      
-      {step === 'causes' && (
-        <div className="text-center p-12 bg-white rounded-2xl border shadow-sm max-w-2xl mx-auto mt-12 text-slate-500">
-           Causes component placeholder. Check useHazopStore for the generated causes data!
-        </div>
-      )}
+      {step === 'report' && <ReportStep />}
     </AppLayout>
   );
 }
