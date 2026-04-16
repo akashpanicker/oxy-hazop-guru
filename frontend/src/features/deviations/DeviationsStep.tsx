@@ -1,7 +1,9 @@
 import { useHazopStore } from '@/store/useHazopStore';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Settings, Wrench, Shield, ArrowLeft, ArrowRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { Checkbox } from '@/components/ui/Checkbox';
+import { Button } from '@/components/ui/Button';
+import React from 'react';
 
 export function DeviationsStep() {
   const { 
@@ -49,18 +51,24 @@ export function DeviationsStep() {
       {/* Equipment Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
         <div className="bg-white border-2 border-[#E5E7EB] rounded-lg p-6 text-center transition-all duration-200 hover:border-oxy-blue hover:-translate-y-1 hover:shadow-[0_4px_12px_rgba(0,83,155,0.1)]">
-          <div className="text-[32px] mb-2">⚙️</div>
-          <div className="text-[36px] font-bold text-oxy-blue mb-1 leading-none">1</div>
+          <div className="flex justify-center mb-3">
+            <Settings size={22} className="text-oxy-blue" />
+          </div>
+          <div className="text-[20px] font-bold text-oxy-blue mb-1 leading-none">1</div>
           <div className="text-[14px] font-medium text-slate-500">Major Equipment</div>
         </div>
         <div className="bg-white border-2 border-[#E5E7EB] rounded-lg p-6 text-center transition-all duration-200 hover:border-oxy-blue hover:-translate-y-1 hover:shadow-[0_4px_12px_rgba(0,83,155,0.1)]">
-          <div className="text-[32px] mb-2">🔧</div>
-          <div className="text-[36px] font-bold text-oxy-blue mb-1 leading-none">4</div>
+          <div className="flex justify-center mb-3">
+            <Wrench size={22} className="text-oxy-blue" />
+          </div>
+          <div className="text-[20px] font-bold text-oxy-blue mb-1 leading-none">4</div>
           <div className="text-[14px] font-medium text-slate-500">Instruments</div>
         </div>
         <div className="bg-white border-2 border-[#E5E7EB] rounded-lg p-6 text-center transition-all duration-200 hover:border-oxy-blue hover:-translate-y-1 hover:shadow-[0_4px_12px_rgba(0,83,155,0.1)]">
-          <div className="text-[32px] mb-2">🛡️</div>
-          <div className="text-[36px] font-bold text-oxy-blue mb-1 leading-none">10</div>
+          <div className="flex justify-center mb-3">
+            <Shield size={22} className="text-oxy-blue" />
+          </div>
+          <div className="text-[20px] font-bold text-oxy-blue mb-1 leading-none">10</div>
           <div className="text-[14px] font-medium text-slate-500">Safety Devices</div>
         </div>
       </div>
@@ -74,7 +82,7 @@ export function DeviationsStep() {
         {/* Section Header */}
         <div className="mb-6">
           <div className="flex items-center gap-3 mb-2">
-            <h2 className="text-[24px] font-semibold text-oxy-dark">Select Deviations</h2>
+            <h2 className="text-[20px] font-semibold text-oxy-dark">Select Deviations</h2>
             <span className="bg-[#FEF3C7] text-[#92400E] px-3 py-1 rounded-full text-[12px] font-medium">At least 1 required</span>
           </div>
           <p className="text-[16px] text-slate-500">Which deviations would you like to analyze for this node?</p>
@@ -107,15 +115,16 @@ export function DeviationsStep() {
       </div>
       
       {/* Bottom Action Bar */}
-      <div className="fixed bottom-0 right-0 h-[72px] bg-white border-t-2 border-[#E5E7EB] flex items-center justify-between px-12 z-[800] left-[240px] max-lg:left-0 shadow-[0_-2px_8px_rgba(0,0,0,0.04)]">
+      <div className="fixed bottom-0 left-0 right-0 h-[72px] bg-white border-t-2 border-[#E5E7EB] flex items-center justify-between px-12 z-[1000] shadow-[0_-2px_8px_rgba(0,0,0,0.04)]">
         <div className="flex items-center gap-4">
-          <Button variant="outline" onClick={() => setStep('equipment')}>
-            ← Back
+          <Button variant="outline" onClick={() => setStep('equipment')} className="flex items-center gap-2">
+            <ArrowLeft size={18} />
+            Back
           </Button>
         </div>
         
         <div className="flex items-center gap-4 text-sm text-slate-500 font-medium">
-          <span>Step 4 of 5</span>
+          <span>Step 3 of 4</span>
           <span>•</span>
           <span>Select Deviations</span>
         </div>
@@ -124,9 +133,14 @@ export function DeviationsStep() {
           <Button
             onClick={generateReport}
             disabled={isLoading || (selectedDeviations.length === 0 && !otherDeviation)}
-            className="min-w-[180px]"
+            className="min-w-[180px] flex items-center gap-2"
           >
-            {isLoading ? <Loader2 size={16} className="animate-spin" /> : 'Continue to Analysis →'}
+            {isLoading ? <Loader2 size={16} className="animate-spin" /> : (
+              <>
+                Continue to Analysis
+                <ArrowRight size={18} />
+              </>
+            )}
           </Button>
         </div>
       </div>

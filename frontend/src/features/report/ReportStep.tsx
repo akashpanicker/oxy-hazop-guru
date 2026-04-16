@@ -9,15 +9,15 @@ export function ReportStep() {
 
   return (
     <div className="flex flex-col gap-6 max-w-[1400px] mx-auto w-full pt-4 h-[calc(100vh-140px)]">
-      
+
       <div className="flex justify-between items-end">
         <div>
-          <h1 className="text-[24px] font-bold text-oxy-dark">HAZOP Worksheet — High Pressure</h1>
-          <p className="text-[16px] text-oxy-grayText mt-1">Node 11: HP Oil Separator #2</p>
+          <h1 className="text-[20px] font-bold text-oxy-dark">HAZOP Worksheet — High Pressure</h1>
+          <p className="text-[14px] text-oxy-grayText mt-1">Node 11: Oil Separator #2</p>
         </div>
         <div className="flex gap-3">
           <Button variant="outline" size="sm">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2"><polyline points="6 9 6 2 18 2 18 9" /><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" /><rect width="12" height="8" x="6" y="14" /></svg>
             Print
           </Button>
           <Button variant="outline" size="sm">Download HTML</Button>
@@ -26,7 +26,7 @@ export function ReportStep() {
       </div>
 
       <div className="bg-white rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.08)] border border-slate-100 p-6 flex flex-col gap-6">
-        
+
         {/* Node Metadata & AI Transparency */}
         <div className="bg-slate-50 border border-slate-200 rounded-lg p-5">
           <div className="flex justify-between items-start">
@@ -35,19 +35,19 @@ export function ReportStep() {
               <div className="flex items-center gap-2"><span className="font-semibold text-slate-700 w-32">Design Pressure:</span> <span className="text-slate-600">2120 PSIG</span></div>
               <div className="flex items-center gap-2"><span className="font-semibold text-slate-700 w-32">Max Pressures:</span> <span className="text-slate-600">Gas: 5000 PSIG | Liquid: 1000 PSIG</span></div>
             </div>
-            
+
             <div className="w-[400px]">
-              <button 
+              <button
                 onClick={() => setShowCalculation(!showCalculation)}
                 className="w-full text-left bg-white border border-oxy-blue/30 rounded p-3 text-sm flex items-center justify-between hover:bg-oxy-bg transition-colors"
-               >
-                 <span className="font-semibold text-oxy-blue flex items-center gap-2">
-                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-                   How was risk calculated?
-                 </span>
-                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`text-oxy-blue transition-transform ${showCalculation ? 'rotate-180' : ''}`}><path d="m6 9 6 6 6-6"/></svg>
+              >
+                <span className="font-semibold text-oxy-blue flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" /></svg>
+                  How was risk calculated?
+                </span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`text-oxy-blue transition-transform ${showCalculation ? 'rotate-180' : ''}`}><path d="m6 9 6 6 6-6" /></svg>
               </button>
-              
+
               {showCalculation && (
                 <div className="mt-2 bg-white border border-slate-200 p-4 text-sm rounded shadow-sm">
                   <h4 className="font-semibold text-slate-800 mb-2 border-b border-slate-100 pb-2">Calculation Walkthrough:</h4>
@@ -115,7 +115,7 @@ export function ReportStep() {
         </div>
 
       </div>
-      
+
       {/* Bottom Action Bar */}
       <div className="fixed bottom-0 right-0 h-[72px] bg-white border-t-2 border-[#E5E7EB] flex items-center justify-between px-12 z-[800] left-0 shadow-[0_-2px_8px_rgba(0,0,0,0.04)]">
         <div className="flex items-center gap-4">
@@ -123,11 +123,11 @@ export function ReportStep() {
             ← Back to Dashboard
           </Button>
         </div>
-        
+
         <div className="flex items-center gap-4 text-sm text-slate-500 font-medium">
           <span>Analysis Complete</span>
         </div>
-        
+
         <div className="flex items-center gap-4">
           <Button onClick={() => alert('Download starting...')}>
             Download Report

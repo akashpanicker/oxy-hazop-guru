@@ -1,4 +1,4 @@
-import React from 'react';
+import logo from '@/assets/oxy-logo.png';
 import { useHazopStore } from '@/store/useHazopStore';
 import { Button } from '@/components/ui/Button';
 
@@ -8,10 +8,10 @@ export function LoginStep() {
   return (
     <div className="flex-1 flex items-center justify-center -mt-8">
       <div className="w-full max-w-md bg-white p-10 rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-slate-100 text-center">
-        <div className="mx-auto w-16 h-16 bg-oxy-bg rounded-full flex items-center justify-center text-oxy-blue font-extrabold text-xl mb-6">
-          Oxy
+        <div className="mx-auto w-20 h-20 mb-6 flex items-center justify-center">
+          <img src={logo} alt="Oxy Logo" className="w-full h-auto object-contain" />
         </div>
-        <h1 className="text-[32px] font-bold text-oxy-dark mb-2">HAZOP Guru</h1>
+        <h1 className="text-[20px] font-bold text-oxy-dark mb-2">HAZOP Guru</h1>
         <p className="text-[16px] text-oxy-grayText mb-8">
           Streamline your HAZOP analysis with AI-powered automation
         </p>

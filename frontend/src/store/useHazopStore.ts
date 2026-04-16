@@ -11,8 +11,8 @@ export interface AnalysisParams {
 }
 
 interface HazopState {
-  step: 'login' | 'dashboard' | 'facility' | 'nodes' | 'equipment' | 'deviations' | 'report';
-  setStep: (step: 'login' | 'dashboard' | 'facility' | 'nodes' | 'equipment' | 'deviations' | 'report') => void;
+  step: 'login' | 'dashboard' | 'facility' | 'equipment' | 'deviations' | 'report';
+  setStep: (step: 'login' | 'dashboard' | 'facility' | 'equipment' | 'deviations' | 'report') => void;
   
   extractedItems: any | null;
   setExtractedItems: (items: any) => void;

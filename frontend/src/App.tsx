@@ -3,7 +3,6 @@ import { useHazopStore } from '@/store/useHazopStore';
 import { LoginStep } from '@/features/auth/LoginStep';
 import { DashboardStep } from '@/features/dashboard/DashboardStep';
 import { FacilityStep } from '@/features/facility/FacilityStep';
-import { NodesStep } from '@/features/nodes/NodesStep';
 import { EquipmentStep } from '@/features/equipment/EquipmentStep';
 import { DeviationsStep } from '@/features/deviations/DeviationsStep';
 import { ReportStep } from '@/features/report/ReportStep';
@@ -16,7 +15,6 @@ export default function App() {
       {step === 'login' && <LoginStep />}
       {step === 'dashboard' && <DashboardStep />}
       {step === 'facility' && <FacilityStep />}
-      {step === 'nodes' && <NodesStep />}
       {step === 'equipment' && <EquipmentStep />}
       {step === 'deviations' && <DeviationsStep />}
       {step === 'report' && <ReportStep />}

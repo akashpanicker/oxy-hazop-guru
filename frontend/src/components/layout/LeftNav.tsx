@@ -2,11 +2,10 @@ import React from 'react';
 import { useHazopStore } from '@/store/useHazopStore';
 
 const steps = [
-  { id: 'facility', number: 1, label: 'Select Facility' },
-  { id: 'nodes', number: 2, label: 'Select Nodes' },
-  { id: 'equipment', number: 3, label: 'Review Equipment' },
-  { id: 'deviations', number: 4, label: 'Select Deviations' },
-  { id: 'report', number: 5, label: 'Generate Report' },
+  { id: 'facility', number: 1, label: 'Select Facility & Nodes' },
+  { id: 'equipment', number: 2, label: 'Review Equipment' },
+  { id: 'deviations', number: 3, label: 'Select Deviations' },
+  { id: 'report', number: 4, label: 'Generate Report' },
 ];
 
 export function LeftNav() {
@@ -17,7 +16,7 @@ export function LeftNav() {
   if (currentIndex === -1 && step !== 'report') return null; // Don't crash if step not found
 
   return (
-    <aside className="fixed top-[60px] left-0 w-[240px] h-[calc(100vh-60px-72px)] bg-white border-r border-[#E5E7EB] py-6 overflow-y-auto z-[900]">
+    <aside className="fixed top-[60px] left-0 w-[240px] h-[calc(100vh-60px-72px)] bg-white border-r border-[#E5E7EB] py-6 overflow-y-auto z-[900] hidden lg:block">
       <ul className="list-none p-0 m-0">
         {steps.map((s, idx) => {
           const isActive = s.id === step;
