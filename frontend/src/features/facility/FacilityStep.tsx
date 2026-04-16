@@ -19,7 +19,7 @@ export function FacilityStep() {
   ];
 
   const nodes = [
-    { id: '11', number: 'Node 11', name: 'Oil Sep #2', available: true },
+    { id: '11', number: 'Node 11', name: 'HP Oil Sep #2', available: true },
     { id: '15', number: 'Node 15', name: 'Flash Gas Scrb', available: true },
     { id: '28', number: 'Node 28', name: 'Compressor', available: true },
   ];
@@ -55,7 +55,7 @@ export function FacilityStep() {
       {/* Left Column: Analysis Setup */}
       <div className="flex-1 flex flex-col gap-6">
         <div>
-          <h1 className="text-[20px] font-bold text-[#1A1A1A] mb-1 tracking-tight">Select Facility & Nodes</h1>
+          <h1 className="text-[16px] font-bold text-[#1A1A1A] mb-1 tracking-tight">Select Facility & Nodes</h1>
           <p className="text-[14px] text-[#6B7280]">Choose the offshore platform and nodes you want to analyze</p>
         </div>
 
@@ -63,7 +63,7 @@ export function FacilityStep() {
         <div className="bg-white rounded-[12px] shadow-[0_1px_3px_rgba(0,0,0,0.1)] p-5 border-none">
           <div className="flex items-center gap-3 mb-3">
             <span className="w-7 h-7 rounded-full bg-oxy-blue text-white flex items-center justify-center font-bold text-xs">1</span>
-            <h2 className="text-[18px] font-semibold text-[#1A1A1A]">Select Facility</h2>
+            <h2 className="text-[16px] font-semibold text-[#1A1A1A]">Select Facility</h2>
           </div>
 
           <div className="relative w-full max-w-[600px]">
@@ -90,8 +90,8 @@ export function FacilityStep() {
                     key={fac.id}
                     disabled={!fac.available}
                     className={`w-full px-4 py-3.5 text-left text-[15px] flex items-center justify-between border-b border-[#F3F4F6] last:border-none transition-colors ${fac.available
-                        ? 'hover:bg-[#F9FAFB] cursor-pointer text-[#1A1A1A]'
-                        : 'text-[#9CA3AF] cursor-not-allowed bg-[#F9FAFB]/50'
+                      ? 'hover:bg-[#F9FAFB] cursor-pointer text-[#1A1A1A]'
+                      : 'text-[#9CA3AF] cursor-not-allowed bg-[#F9FAFB]/50'
                       }`}
                     onClick={() => handleFacilitySelect(fac.id)}
                   >
@@ -122,7 +122,7 @@ export function FacilityStep() {
               <div className="flex items-center gap-3">
                 <span className="w-7 h-7 rounded-full bg-oxy-blue text-white flex items-center justify-center font-bold text-xs">2</span>
                 <div>
-                  <h2 className="text-[18px] font-semibold text-[#1A1A1A]">Select Nodes to Analyze</h2>
+                  <h2 className="text-[16px] font-semibold text-[#1A1A1A]">Select Nodes to Analyze</h2>
                   <p className="text-xs text-[#6B7280]">Choose one or more nodes from the flow diagram below</p>
                 </div>
               </div>
@@ -172,7 +172,7 @@ export function FacilityStep() {
                             </svg>
                           )}
                         </div>
-                        <div className="text-[18px] font-bold text-[#1A1A1A] mb-1">{node.number}</div>
+                        <div className="text-[14px] font-bold text-[#1A1A1A] mb-1">{node.number}</div>
                         <div className="text-[14px] text-[#6B7280]">{node.name}</div>
                         {!isAvailable && <div className="mt-4 inline-block text-[10px] font-bold tracking-wider text-[#9CA3AF] bg-[#F3F4F6] px-2 py-1 rounded">COMING SOON</div>}
                       </button>

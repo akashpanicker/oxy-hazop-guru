@@ -24,7 +24,7 @@ export function EquipmentStep() {
   return (
     <div className="flex flex-col h-[calc(100vh-160px)]">
       <div className="mb-4">
-        <h1 className="text-[20px] font-bold text-oxy-dark">Review Extracted Equipment - Node 11: Oil Separator #2</h1>
+        <h1 className="text-[20px] font-bold text-oxy-dark">Review Extracted Equipment - Node 11: HP Oil Separator #2</h1>
       </div>
 
       <div className="flex flex-col gap-6">

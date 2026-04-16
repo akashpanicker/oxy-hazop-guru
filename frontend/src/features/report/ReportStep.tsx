@@ -13,7 +13,7 @@ export function ReportStep() {
       <div className="flex justify-between items-end">
         <div>
           <h1 className="text-[20px] font-bold text-oxy-dark">HAZOP Worksheet — High Pressure</h1>
-          <p className="text-[14px] text-oxy-grayText mt-1">Node 11: Oil Separator #2</p>
+          <p className="text-[14px] text-oxy-grayText mt-1">Node 11: HP Oil Separator #2</p>
         </div>
         <div className="flex gap-3">
           <Button variant="outline" size="sm">
