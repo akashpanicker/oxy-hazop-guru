@@ -15,13 +15,14 @@ const BREADCRUMBS: Record<string, string[]> = {
   equipment: ['Dashboard', 'Select Facility & Nodes', 'Review Equipment'],
   deviations: ['Dashboard', 'Select Facility & Nodes', 'Review Equipment', 'Select Deviations'],
   report: ['Dashboard', 'Select Facility & Nodes', 'Review Equipment', 'Select Deviations', 'Generate Report'],
+  sensitivity: ['Dashboard', 'Select Facility & Nodes', 'Review Equipment', 'Select Deviations', 'Generate Report', 'Sensitivity Analysis'],
 };
 
 export function AppLayout({ children, hideNav }: AppLayoutProps) {
   const { step, setStep } = useHazopStore();
 
   // Left Nav triggers only on specific wizard steps
-  const showLeftNav = ['facility', 'equipment', 'deviations'].includes(step) && !hideNav;
+  const showLeftNav = ['facility', 'equipment', 'deviations', 'report', 'sensitivity'].includes(step) && !hideNav;
 
   const currentPath = BREADCRUMBS[step] || [];
 

@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import type { AnalysisParams, ExtractionResult } from '@/types/hazop';
 
 interface HazopState {
-  step: 'login' | 'dashboard' | 'facility' | 'equipment' | 'deviations' | 'report';
+  step: 'login' | 'dashboard' | 'facility' | 'equipment' | 'deviations' | 'report' | 'sensitivity';
   setStep: (step: HazopState['step']) => void;
 
   // Loading & error
@@ -53,7 +53,7 @@ interface HazopState {
 }
 
 const initialState = {
-  step: 'login' as const,
+  step: 'login' as HazopState['step'],
   isLoading: false,
   loadingMessage: '',
   error: null as string | null,

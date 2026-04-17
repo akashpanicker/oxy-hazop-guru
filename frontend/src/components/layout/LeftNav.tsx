@@ -1,11 +1,14 @@
 import React from 'react';
 import { useHazopStore } from '@/store/useHazopStore';
 
-const steps = [
+interface NavStep { id: string; number: number; label: string; badge?: string }
+
+const steps: NavStep[] = [
   { id: 'facility', number: 1, label: 'Select Facility & Nodes' },
   { id: 'equipment', number: 2, label: 'Review Equipment' },
   { id: 'deviations', number: 3, label: 'Select Deviations' },
   { id: 'report', number: 4, label: 'Generate Report' },
+  { id: 'sensitivity', number: 5, label: 'Sensitivity Analysis', badge: 'Optional' },
 ];
 
 export function LeftNav() {
@@ -13,7 +16,7 @@ export function LeftNav() {
 
   const currentIndex = steps.findIndex(s => s.id === step);
   
-  if (currentIndex === -1 && step !== 'report') return null; // Don't crash if step not found
+  if (currentIndex === -1 && step !== 'report' && step !== 'sensitivity') return null;
 
   return (
     <aside className="fixed top-[60px] left-0 w-[240px] h-[calc(100vh-60px-72px)] bg-white border-r border-[#E5E7EB] py-6 overflow-y-auto z-[900] hidden lg:block">
@@ -35,9 +38,16 @@ export function LeftNav() {
               >
                 {isCompleted ? '✓' : s.number}
               </div>
-              <span className={`text-[14px] font-medium ${isCompleted ? 'text-[#6B7280]' : 'text-[#1A1A1A]'}`}>
-                {s.label}
-              </span>
+              <div className="flex flex-col min-w-0">
+                <span className={`text-[14px] font-medium ${isCompleted ? 'text-[#6B7280]' : 'text-[#1A1A1A]'}`}>
+                  {s.label}
+                </span>
+                {s.badge && (
+                  <span className="text-[10px] font-medium text-[#9CA3AF] bg-[#F3F4F6] rounded-full px-2 py-0.5 mt-0.5 self-start leading-tight">
+                    {s.badge}
+                  </span>
+                )}
+              </div>
             </li>
           );
         })}

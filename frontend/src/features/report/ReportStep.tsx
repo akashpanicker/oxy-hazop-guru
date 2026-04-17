@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useHazopStore } from '@/store/useHazopStore';
 import { Button } from '@/components/ui/Button';
-import { ArrowLeft, Printer, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Printer, AlertCircle, FlaskConical } from 'lucide-react';
 
 // ── Risk level colours (matches HTML worksheet) ───────────────────────────
 const RISK_CELL: Record<string, { bg: string; color: string }> = {
@@ -350,6 +350,9 @@ export function ReportStep() {
         <div className="flex gap-3">
           <Button variant="outline" onClick={() => { setDeviationAnalyses(null); setStep('dashboard'); }}>
             New Analysis
+          </Button>
+          <Button variant="outline" onClick={() => setStep('sensitivity')} className="flex items-center gap-2">
+            <FlaskConical size={16} /> Sensitivity Analysis
           </Button>
           <Button onClick={() => window.print()}>
             <Printer size={16} className="mr-2" /> Print Report

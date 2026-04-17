@@ -6,6 +6,7 @@ import { FacilityStep } from '@/features/facility/FacilityStep';
 import { EquipmentStep } from '@/features/equipment/EquipmentStep';
 import { DeviationsStep } from '@/features/deviations/DeviationsStep';
 import { ReportStep } from '@/features/report/ReportStep';
+import { SensitivityStep } from '@/features/sensitivity/SensitivityStep';
 
 export default function App() {
   const { step } = useHazopStore();
@@ -18,6 +19,7 @@ export default function App() {
       {step === 'equipment' && <EquipmentStep />}
       {step === 'deviations' && <DeviationsStep />}
       {step === 'report' && <ReportStep />}
+      {step === 'sensitivity' && <SensitivityStep />}
     </AppLayout>
   );
 }
