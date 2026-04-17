@@ -43,8 +43,8 @@ interface HazopState {
   worksheetData: any | null;
   setWorksheetData: (data: any) => void;
 
-  deviationAnalyses: Record<string, string> | null;
-  setDeviationAnalyses: (analyses: Record<string, string> | null) => void;
+  deviationAnalyses: Record<string, any> | null;
+  setDeviationAnalyses: (analyses: Record<string, any> | null) => void;
 
   analysisParams: AnalysisParams;
   setAnalysisParams: (params: AnalysisParams) => void;

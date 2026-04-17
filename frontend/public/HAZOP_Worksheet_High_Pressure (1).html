@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>HAZOP Worksheet — High Pressure</title>
+<style>
+body { font-family: Arial, sans-serif; margin: 20px; font-size: 12px; }
+h2 { color: #333; }
+table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
+th, td { border: 1px solid #ccc; padding: 6px 8px; text-align: left; vertical-align: top; }
+th { background: #343a40; color: #fff; font-size: 11px; text-transform: uppercase; }
+.row-paf { background: #D6EAF8; }
+.row-pdlor { background: #FDEBD0; }
+.risk-a { background: #28a745 !important; color: #fff; font-weight: bold; text-align: center; }
+.risk-b { background: #8bc34a !important; color: #fff; font-weight: bold; text-align: center; }
+.risk-c { background: #ffc107 !important; color: #000; font-weight: bold; text-align: center; }
+.risk-d { background: #ff9800 !important; color: #fff; font-weight: bold; text-align: center; }
+.risk-e { background: #dc3545 !important; color: #fff; font-weight: bold; text-align: center; }
+.pec-yes { color: #dc3545; font-weight: bold; }
+ul { margin: 0; padding-left: 16px; }
+li { margin-bottom: 2px; }
+.badge { padding: 2px 6px; border-radius: 4px; font-size: 11px; }
+.bg-primary { background: #0d6efd; color: #fff; }
+.bg-warning { background: #ffc107; color: #000; }
+.alert-info { background: #cfe2ff; border: 1px solid #b6d4fe; padding: 12px; border-radius: 6px; margin-bottom: 16px; }
+s { color: #999; }
+.card { border: 1px solid #dee2e6; border-radius: 6px; margin-bottom: 16px; }
+.card-header { padding: 8px 12px; font-weight: bold; }
+.card-body { padding: 12px; }
+.text-muted { color: #6c757d; }
+@media print { body { margin: 0; } }
+</style>
+</head>
+<body>
+<h2>HAZOP Worksheet — High Pressure</h2>
+<div class="alert alert-info mb-4">
+    <div class="row">
+        <div class="col-md-4">
+            <strong>Drawing:</strong> Node-12.pdf
+        </div>
+        <div class="col-md-3">
+            <strong>Gas Max P:</strong> 5000 PSIG
+        </div>
+        <div class="col-md-3">
+            <strong>Liquid Max P:</strong> 1000 PSIG
+        </div>
+        <div class="col-md-2">
+            <strong>Liquid Inv:</strong> 
+        </div>
+    </div>
+    
+    <div class="mt-1"><strong>Design Pressure:</strong> 2120 PSIG</div>
+    
+    <hr class="my-2">
+    <small>
+        <span class="badge bg-success me-1">2 Included</span>
+        <span class="badge bg-secondary me-1">0 Excluded</span>
+        <span class="badge bg-warning text-dark">0 Cross-Referenced</span>
+    </small>
+</div>
+<table class="table table-bordered table-sm worksheet-table" id="worksheetTable">
+        <thead class="table-dark sticky-top">
+            <tr>
+                <th class="ws-col-num">#</th>
+                <th class="ws-col-dev">Deviation</th>
+                <th class="ws-col-cause">Cause</th>
+                <th class="ws-col-ref">Drawing/Ref</th>
+                <th class="ws-col-intcon">Intermediate Consequence</th>
+                <th class="ws-col-cat">Category</th>
+                <th class="ws-col-scenario">Scenario / Final Impacts</th>
+                <th class="ws-col-pec">PEC</th>
+                <th class="ws-col-mit">Mitigation (CME Details)</th>
+                <th class="ws-col-cme">CME Name</th>
+                <th class="ws-col-cnt">CME #</th>
+                <th class="ws-col-rc">Risk C</th>
+                <th class="ws-col-rp">Risk P</th>
+                <th class="ws-col-rl">Risk Level</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+            <tr class="row-paf">
+                
+                <td class="fw-bold text-center" rowspan="3">1</td>
+                <td rowspan="3">High Pressure</td>
+                <td rowspan="3">FSV-1010 (Gas outlet to flash gas compressor 3rd stage suction) fails closed</td>
+                <td class="text-nowrap" rowspan="3">Node-12.pdf</td>
+                <td class="ws-cell-intcon" rowspan="3">Potential increase in MBD-1010 operating pressure from normal to 5000 PSIG (design pressure: 2120 PSIG). Pressure ratio: 2.36x DP.</td>
+                
+                <td class="text-center fw-bold">
+                    <span class="badge bg-primary">
+                        PAF
+                    </span>
+                </td>
+                <td class="ws-cell-scenario">
+                    <ul class="scenario-bullets mb-0">
+                        
+                        <li>Maximum pressure to reach 5000 PSIG; design pressure is 2120 PSIG.</li>
+                        
+                        <li>&gt; 2x DP (2.36x): Stresses greater than yield strength, resulting in potential full-bore rupture.</li>
+                        
+                        <li>Pressure &gt;= 100 PSIG: Potential Jet Fire and VCE.</li>
+                        
+                        <li>PEC-1: Impacts to more than 14 personnel possible. Potential fatalities and major asset damage.</li>
+                        
+                    </ul>
+                </td>
+                <td class="text-center pec-yes">
+                    YES
+                </td>
+                <td class="ws-cell-mit">
+                    <ul class="mitigation-bullets mb-0">
+                        
+                        <li>PSV-1010: Relieves excess pressure at 2120 PSIG set point</li>
+                        
+                        <li>PSHH-1010: Initiates shutdown on high-high pressure</li>
+                        
+                        <li>Gas Detection: Closes BSDV on confirmed gas release</li>
+                        
+                        <li>Deluge/TSE: Activated on confirmed fire/heat</li>
+                        
+                    </ul>
+                </td>
+                <td class="small">PSV-1010; PSHH-1010; Gas Detection; Deluge/TSE</td>
+                <td class="text-center fw-bold">4</td>
+                <td class="text-center fw-bold">5</td>
+                <td class="text-center fw-bold">1</td>
+                <td class="text-center fw-bold risk-c">
+                    C
+                </td>
+            </tr>
+            
+            <tr class="row-pdlor">
+                
+                <td class="text-center fw-bold">
+                    <span class="badge bg-warning text-dark">
+                        PD/LOR
+                    </span>
+                </td>
+                <td class="ws-cell-scenario">
+                    <ul class="scenario-bullets mb-0">
+                        
+                        <li>Maximum pressure to reach 5000 PSIG; design pressure is 2120 PSIG.</li>
+                        
+                        <li>&gt; 2x DP (2.36x): Stresses greater than yield strength, resulting in potential full-bore rupture.</li>
+                        
+                        <li>Pressure &gt;= 100 PSIG: Potential Jet Fire and VCE.</li>
+                        
+                        <li>Estimated downtime: 120 days. Production loss: $194MM + Repair: $20MM = Total: $214MM ($50–250MM). Consequence level 4.</li>
+                        
+                    </ul>
+                </td>
+                <td class="text-center ">
+                    —
+                </td>
+                <td class="ws-cell-mit">
+                    <ul class="mitigation-bullets mb-0">
+                        
+                        <li>PSV-1010: Relieves excess pressure at 2120 PSIG set point</li>
+                        
+                        <li>PSHH-1010: Initiates shutdown on high-high pressure</li>
+                        
+                        <li>Gas Detection: Closes BSDV on confirmed gas release</li>
+                        
+                        <li>Deluge/TSE: Activated on confirmed fire/heat</li>
+                        
+                    </ul>
+                </td>
+                <td class="small">PSV-1010; PSHH-1010; Gas Detection; Deluge/TSE</td>
+                <td class="text-center fw-bold">4</td>
+                <td class="text-center fw-bold">4</td>
+                <td class="text-center fw-bold">1</td>
+                <td class="text-center fw-bold risk-b">
+                    B
+                </td>
+            </tr>
+            
+            <tr class="row-ecr">
+                
+                <td class="text-center fw-bold">
+                    <span class="badge bg-success">
+                        ECR
+                    </span>
+                </td>
+                <td class="ws-cell-scenario">
+                    <ul class="scenario-bullets mb-0">
+                        
+                        <li>Maximum pressure to reach 5000 PSIG; design pressure is 2120 PSIG.</li>
+                        
+                        <li>&gt; 2x DP (2.36x): Stresses greater than yield strength, resulting in potential full-bore rupture.</li>
+                        
+                        <li>Pressure &gt;= 100 PSIG: Potential Jet Fire and VCE.</li>
+                        
+                        <li>No significant liquid release expected. Environmental cleanup cost &lt;$1MM. Consequence level 1.</li>
+                        
+                    </ul>
+                </td>
+                <td class="text-center ">
+                    —
+                </td>
+                <td class="ws-cell-mit">
+                    <ul class="mitigation-bullets mb-0">
+                        
+                        <li>PSHH-1010: Closes BSDV on high-high pressure, limiting release duration</li>
+                        
+                        <li>Gas Detection: Closes BSDV on confirmed gas/leak, limiting release duration</li>
+                        
+                    </ul>
+                </td>
+                <td class="small">PSHH-1010; Gas Detection</td>
+                <td class="text-center fw-bold">2</td>
+                <td class="text-center fw-bold">1</td>
+                <td class="text-center fw-bold">1</td>
+                <td class="text-center fw-bold risk-a">
+                    A
+                </td>
+            </tr>
+            
+            <tr class="row-paf">
+                
+                <td class="fw-bold text-center" rowspan="3">2</td>
+                <td rowspan="3">High Pressure</td>
+                <td rowspan="3">FSV-1010 (Gas outlet to flash gas compressor 3rd stage suction) spurious closure</td>
+                <td class="text-nowrap" rowspan="3">Node-12.pdf</td>
+                <td class="ws-cell-intcon" rowspan="3">Potential increase in MBD-1010 operating pressure from normal to 5000 PSIG (design pressure: 2120 PSIG). Pressure ratio: 2.36x DP.</td>
+                
+                <td class="text-center fw-bold">
+                    <span class="badge bg-primary">
+                        PAF
+                    </span>
+                </td>
+                <td class="ws-cell-scenario">
+                    <ul class="scenario-bullets mb-0">
+                        
+                        <li>Maximum pressure to reach 5000 PSIG; design pressure is 2120 PSIG.</li>
+                        
+                        <li>&gt; 2x DP (2.36x): Stresses greater than yield strength, resulting in potential full-bore rupture.</li>
+                        
+                        <li>Pressure &gt;= 100 PSIG: Potential Jet Fire and VCE.</li>
+                        
+                        <li>PEC-1: Impacts to more than 14 personnel possible. Potential fatalities and major asset damage.</li>
+                        
+                    </ul>
+                </td>
+                <td class="text-center pec-yes">
+                    YES
+                </td>
+                <td class="ws-cell-mit">
+                    <ul class="mitigation-bullets mb-0">
+                        
+                        <li>PSV-1010: Relieves excess pressure at 2120 PSIG set point</li>
+                        
+                        <li>PSHH-1010: Initiates shutdown on high-high pressure</li>
+                        
+                        <li>Gas Detection: Closes BSDV on confirmed gas release</li>
+                        
+                        <li>Deluge/TSE: Activated on confirmed fire/heat</li>
+                        
+                    </ul>
+                </td>
+                <td class="small">PSV-1010; PSHH-1010; Gas Detection; Deluge/TSE</td>
+                <td class="text-center fw-bold">4</td>
+                <td class="text-center fw-bold">5</td>
+                <td class="text-center fw-bold">1</td>
+                <td class="text-center fw-bold risk-c">
+                    C
+                </td>
+            </tr>
+            
+            <tr class="row-pdlor">
+                
+                <td class="text-center fw-bold">
+                    <span class="badge bg-warning text-dark">
+                        PD/LOR
+                    </span>
+                </td>
+                <td class="ws-cell-scenario">
+                    <ul class="scenario-bullets mb-0">
+                        
+                        <li>Maximum pressure to reach 5000 PSIG; design pressure is 2120 PSIG.</li>
+                        
+                        <li>&gt; 2x DP (2.36x): Stresses greater than yield strength, resulting in potential full-bore rupture.</li>
+                        
+                        <li>Pressure &gt;= 100 PSIG: Potential Jet Fire and VCE.</li>
+                        
+                        <li>Estimated downtime: 120 days. Production loss: $194MM + Repair: $20MM = Total: $214MM ($50–250MM). Consequence level 4.</li>
+                        
+                    </ul>
+                </td>
+                <td class="text-center ">
+                    —
+                </td>
+                <td class="ws-cell-mit">
+                    <ul class="mitigation-bullets mb-0">
+                        
+                        <li>PSV-1010: Relieves excess pressure at 2120 PSIG set point</li>
+                        
+                        <li>PSHH-1010: Initiates shutdown on high-high pressure</li>
+                        
+                        <li>Gas Detection: Closes BSDV on confirmed gas release</li>
+                        
+                        <li>Deluge/TSE: Activated on confirmed fire/heat</li>
+                        
+                    </ul>
+                </td>
+                <td class="small">PSV-1010; PSHH-1010; Gas Detection; Deluge/TSE</td>
+                <td class="text-center fw-bold">4</td>
+                <td class="text-center fw-bold">4</td>
+                <td class="text-center fw-bold">1</td>
+                <td class="text-center fw-bold risk-b">
+                    B
+                </td>
+            </tr>
+            
+            <tr class="row-ecr">
+                
+                <td class="text-center fw-bold">
+                    <span class="badge bg-success">
+                        ECR
+                    </span>
+                </td>
+                <td class="ws-cell-scenario">
+                    <ul class="scenario-bullets mb-0">
+                        
+                        <li>Maximum pressure to reach 5000 PSIG; design pressure is 2120 PSIG.</li>
+                        
+                        <li>&gt; 2x DP (2.36x): Stresses greater than yield strength, resulting in potential full-bore rupture.</li>
+                        
+                        <li>Pressure &gt;= 100 PSIG: Potential Jet Fire and VCE.</li>
+                        
+                        <li>No significant liquid release expected. Environmental cleanup cost &lt;$1MM. Consequence level 1.</li>
+                        
+                    </ul>
+                </td>
+                <td class="text-center ">
+                    —
+                </td>
+                <td class="ws-cell-mit">
+                    <ul class="mitigation-bullets mb-0">
+                        
+                        <li>PSHH-1010: Closes BSDV on high-high pressure, limiting release duration</li>
+                        
+                        <li>Gas Detection: Closes BSDV on confirmed gas/leak, limiting release duration</li>
+                        
+                    </ul>
+                </td>
+                <td class="small">PSHH-1010; Gas Detection</td>
+                <td class="text-center fw-bold">2</td>
+                <td class="text-center fw-bold">1</td>
+                <td class="text-center fw-bold">1</td>
+                <td class="text-center fw-bold risk-a">
+                    A
+                </td>
+            </tr>
+            
+        </tbody>
+    </table>
+<div class="card mb-4">
+    <div class="card-header"><i class="bi bi-info-circle me-2"></i> Legend</div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <h6>Row Colors</h6>
+                <span class="legend-swatch" style="background:#D6EAF8"></span> PAF (People, Assets, Facilities)
+                <br>
+                <span class="legend-swatch" style="background:#FDEBD0"></span> PD/LOR (Process Deviation / Loss of Revenue)
+                <br>
+                <span class="legend-swatch" style="background:#E8F5E9"></span> ECR (Environmental Cleanup/Remediation)
+            </div>
+            <div class="col-md-6">
+                <h6>Risk Levels</h6>
+                <span class="legend-swatch risk-a"></span> A — Negligible
+                <span class="legend-swatch risk-b"></span> B — Low
+                <span class="legend-swatch risk-c-swatch"></span> C — Medium
+                <span class="legend-swatch risk-d"></span> D — High
+                <span class="legend-swatch risk-e"></span> E — Critical
+            </div>
+        </div>
+    </div>
+</div>
+<p style="color:#999; font-size:10px; margin-top:20px;">Generated by HAZOP P&ID Analysis Tool</p>
+</body>
+</html>
