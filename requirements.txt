@@ -2,3 +2,4 @@ flask
 flask-session
 anthropic
 python-dotenv
+python-docx
