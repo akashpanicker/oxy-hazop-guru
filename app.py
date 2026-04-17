@@ -11,12 +11,14 @@ Session(app)
 
 os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 
-# Node ID → PDF filename mapping (files in frontend/public/)
-NODE_PDF_MAP = {
-    "11": "node 11.pdf",
-    "15": "Oxy-Node 15.pdf",
-    "28": "simplified version of node 28 1.pdf",
+# Node ID → file mapping (PNG preferred for better Claude vision extraction)
+NODE_FILE_MAP = {
+    "11": {"file": "Oxy-Node 11.png",  "media_type": "image/png"},
+    "15": {"file": "Oxy-Node 15.png",  "media_type": "image/png"},
+    "28": {"file": "Oxy-Node 28.png",  "media_type": "image/png"},
 }
+# Keep legacy alias so any remaining references don't break
+NODE_PDF_MAP = {k: v["file"] for k, v in NODE_FILE_MAP.items()}
 
 
 @app.after_request
@@ -72,23 +74,25 @@ def api_extract_node():
         return jsonify({"error": "node_id is required"}), 400
 
     node_id = str(data["node_id"])
-    filename = NODE_PDF_MAP.get(node_id)
-    if not filename:
-        return jsonify({"error": f"Unknown node: {node_id}. Available: {list(NODE_PDF_MAP.keys())}"}), 400
+    node_info = NODE_FILE_MAP.get(node_id)
+    if not node_info:
+        return jsonify({"error": f"Unknown node: {node_id}. Available: {list(NODE_FILE_MAP.keys())}"}), 400
 
-    # Resolve the PDF file path from frontend/public/
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    pdf_path = os.path.join(base_dir, "frontend", "public", filename)
+    filename   = node_info["file"]
+    media_type = node_info["media_type"]
 
-    if not os.path.exists(pdf_path):
-        return jsonify({"error": f"PDF file not found for node {node_id}: {filename}"}), 404
+    base_dir   = os.path.dirname(os.path.abspath(__file__))
+    file_path  = os.path.join(base_dir, "frontend", "public", filename)
+
+    if not os.path.exists(file_path):
+        return jsonify({"error": f"File not found for node {node_id}: {filename}"}), 404
 
     try:
-        with open(pdf_path, "rb") as f:
-            pdf_base64 = base64.b64encode(f.read()).decode("utf-8")
+        with open(file_path, "rb") as f:
+            file_base64 = base64.b64encode(f.read()).decode("utf-8")
 
         app.logger.info("Extracting HAZOP items from node %s (%s)...", node_id, filename)
-        result = extract_hazop_items(pdf_base64, app.config["ANTHROPIC_API_KEY"], node_id=node_id)
+        result = extract_hazop_items(file_base64, app.config["ANTHROPIC_API_KEY"], node_id=node_id, media_type=media_type)
 
         # Store in session for downstream endpoints
         session["extracted_items"] = result
@@ -270,23 +274,23 @@ def api_generate_deviation_analysis():
     except Exception as e:
         return jsonify({"error": f"Failed to read prompt library: {e}"}), 500
 
-    # Load PDFs for selected nodes
-    pdf_base64_list = []
+    # Load node files (PNG preferred)
+    file_entries = []  # list of (base64, media_type)
     for node_id in node_ids:
-        filename = NODE_PDF_MAP.get(str(node_id))
-        if filename:
-            pdf_path = os.path.join(base_dir, "frontend", "public", filename)
-            if os.path.exists(pdf_path):
-                with open(pdf_path, "rb") as f:
-                    pdf_base64_list.append(base64.b64encode(f.read()).decode("utf-8"))
+        node_info = NODE_FILE_MAP.get(str(node_id))
+        if node_info:
+            file_path = os.path.join(base_dir, "frontend", "public", node_info["file"])
+            if os.path.exists(file_path):
+                with open(file_path, "rb") as f:
+                    file_entries.append((base64.b64encode(f.read()).decode("utf-8"), node_info["media_type"]))
 
-    if not pdf_base64_list:
-        return jsonify({"error": f"No PDFs found for nodes: {node_ids}. Available: {list(NODE_PDF_MAP.keys())}"}), 404
+    if not file_entries:
+        return jsonify({"error": f"No files found for nodes: {node_ids}. Available: {list(NODE_FILE_MAP.keys())}"}), 404
 
     try:
-        app.logger.info("Generating Opus analysis for deviation '%s' across %d node(s)...", deviation, len(pdf_base64_list))
+        app.logger.info("Generating Opus analysis for deviation '%s' across %d node(s)...", deviation, len(file_entries))
         analysis = generate_deviation_analysis(
-            pdf_base64_list,
+            file_entries,
             prompt_library_text,
             extracted_items,
             deviation,

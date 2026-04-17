@@ -8,6 +8,13 @@ from .prompt_templates import HAZOP_EXTRACTION_PROMPT, CAUSES_GENERATION_PROMPT,
 from .mock_data import MOCK_EXTRACTIONS, MOCK_CAUSES, MOCK_WORKSHEET
 
 
+def _file_block(data_base64: str, media_type: str) -> dict:
+    """Build the correct Claude content block for an image or document."""
+    if media_type.startswith("image/"):
+        return {"type": "image", "source": {"type": "base64", "media_type": media_type, "data": data_base64}}
+    return {"type": "document", "source": {"type": "base64", "media_type": media_type, "data": data_base64}}
+
+
 def extract_json_from_response(text):
     """Extract JSON from Claude's response, stripping markdown fences if present."""
     text = text.strip()
@@ -25,8 +32,8 @@ def extract_json_from_response(text):
     return json.loads(text)
 
 
-def extract_hazop_items(pdf_base64, api_key, node_id=None):
-    """Send PDF to Claude API and extract HAZOP-relevant items."""
+def extract_hazop_items(file_base64, api_key, node_id=None, media_type="image/png"):
+    """Send a P&ID image or PDF to Claude and extract HAZOP-relevant items."""
     try:
         client = anthropic.Anthropic(api_key=api_key)
         message = client.messages.create(
@@ -36,14 +43,7 @@ def extract_hazop_items(pdf_base64, api_key, node_id=None):
                 {
                     "role": "user",
                     "content": [
-                        {
-                            "type": "document",
-                            "source": {
-                                "type": "base64",
-                                "media_type": "application/pdf",
-                                "data": pdf_base64,
-                            },
-                        },
+                        _file_block(file_base64, media_type),
                         {
                             "type": "text",
                             "text": HAZOP_EXTRACTION_PROMPT,
@@ -135,16 +135,16 @@ def generate_worksheet(extracted_items, confirmed_causes, analysis_params, pdf_f
         raise e
 
 
-def generate_deviation_analysis(pdf_base64_list, prompt_library_text, extracted_items, deviation, api_key):
-    """Generate structured HAZOP worksheet JSON for a single deviation using Claude Opus 4.7."""
+def generate_deviation_analysis(file_entries, prompt_library_text, extracted_items, deviation, api_key):
+    """Generate structured HAZOP worksheet JSON for a single deviation using Claude Opus 4.7.
+
+    file_entries: list of (base64_str, media_type) tuples — PNG images preferred.
+    """
     client = anthropic.Anthropic(api_key=api_key)
 
     content = []
-    for pdf_b64 in pdf_base64_list:
-        content.append({
-            "type": "document",
-            "source": {"type": "base64", "media_type": "application/pdf", "data": pdf_b64},
-        })
+    for b64, media_type in file_entries:
+        content.append(_file_block(b64, media_type))
 
     content.append({
         "type": "text",
