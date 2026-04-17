@@ -8,7 +8,7 @@ export function DashboardStep() {
   return (
     <div className="flex flex-col max-w-full mx-auto w-full">
       <h1 className="text-[20px] font-bold text-[#1A1A1A] mb-8 tracking-[-0.02em] text-left">
-        Welcome to HAZOP Guru
+        Welcome to HAZOP GURU
       </h1>
 
       <div className="bg-white rounded-[12px] shadow-[0_1px_3px_rgba(0,0,0,0.1)] p-8 md:p-12 mb-12">
@@ -21,12 +21,12 @@ export function DashboardStep() {
             </svg>
           </div>
           <h2 className="text-[18px] font-semibold text-[#1A1A1A] leading-[1.3]">
-            What is HAZOP Guru?
+            What is HAZOP GURU?
           </h2>
         </div>
 
         <p className="text-[14px] text-[#4A4A4A] leading-[1.6] mb-8 max-w-[700px]">
-          HAZOP Guru automates hazard analysis for offshore platforms.
+          HAZOP GURU automates hazard analysis for offshore platforms.
           Our AI extracts equipment from P&IDs, suggests deviations, and
           generates audit-ready reports in minutes.
         </p>

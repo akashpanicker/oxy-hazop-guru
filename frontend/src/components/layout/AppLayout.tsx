@@ -35,7 +35,7 @@ export function AppLayout({ children, hideNav }: AppLayoutProps) {
             </div>
             <div className="flex flex-col border-l border-[#E5E7EB] pl-4">
               <span className="text-[14px] font-bold tracking-tight text-[#1A1A1A] leading-tight">
-                HAZOP Guru
+                HAZOP GURU
               </span>
               {currentPath.length > 0 && (
                 <div className="flex items-center gap-1 text-[11px] text-[#9CA3AF] mt-0.5">

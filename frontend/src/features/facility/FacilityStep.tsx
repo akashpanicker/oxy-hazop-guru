@@ -45,9 +45,13 @@ export function FacilityStep() {
   const [viewMode, setViewMode] = useState<'simple' | 'hfd' | 'pid'>('simple');
 
   const facilities = [
-    { id: 'constitution', name: 'Constitution Platform', available: true },
-    { id: 'delta', name: 'Delta Platform (Coming Soon)', available: false },
-    { id: 'epsilon', name: 'Epsilon Platform (Coming Soon)', available: false },
+    { id: 'constitution', name: 'Constitution', available: true },
+    { id: 'horn-mountain', name: 'Horn Mountain (Coming Soon)', available: false },
+    { id: 'lucius', name: 'Lucius (Coming Soon)', available: false },
+    { id: 'marlin', name: 'Marlin (Coming Soon)', available: false },
+    { id: 'holstein', name: 'Holstein (Coming Soon)', available: false },
+    { id: 'heidelberg', name: 'Heidelberg (Coming Soon)', available: false },
+    { id: 'marco-polo', name: 'Marco Polo (Coming Soon)', available: false },
   ];
 
   const handleFacilitySelect = (id: string) => {
@@ -79,7 +83,7 @@ export function FacilityStep() {
 
   return (
     <div className="flex flex-col gap-6 w-full max-w-[1500px] mx-auto pt-2 pb-12">
-      
+
       {/* Upper Section: Title and Facility Selection */}
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-6">
@@ -385,7 +389,7 @@ export function FacilityStep() {
                   })}
                 </div>
 
-                {/* ========== Legend Panel ========== */}
+                {/* ========== Legend Panel (commented out) ==========
                 <div className="absolute bg-white border border-[#E5E7EB] rounded-[8px] shadow-[0_2px_4px_rgba(0,0,0,0.08)]" style={{ bottom: 40, right: 40, zIndex: 15, padding: '12px 20px' }}>
                   <div className="text-[11px] font-bold text-[#6B7280] uppercase tracking-widest mb-2">Flow Types:</div>
                   <div className="flex gap-5">
@@ -396,7 +400,6 @@ export function FacilityStep() {
                       { color: FLOW_COLORS.FEED, label: 'Feed' },
                     ].map((item) => (
                       <div key={item.label} className="flex items-center gap-[8px]">
-                        {/* Line sample with arrowhead */}
                         <svg width="44" height="10" viewBox="0 0 44 10">
                           <line x1="0" y1="5" x2="34" y2="5" stroke={item.color} strokeWidth="3" strokeLinecap="round" />
                           <polygon points="34,1 42,5 34,9" fill={item.color} />
@@ -406,6 +409,7 @@ export function FacilityStep() {
                     ))}
                   </div>
                 </div>
+                ========== */}
 
               </div>
             </div>
