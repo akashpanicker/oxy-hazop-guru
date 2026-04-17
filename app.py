@@ -3,7 +3,7 @@ import base64
 from flask import Flask, render_template, request, session, jsonify, redirect, url_for
 from flask_session import Session
 from config import Config
-from services.claude_service import extract_hazop_items, generate_causes, generate_worksheet, generate_analysis, read_docx
+from services.claude_service import extract_hazop_items, generate_causes, generate_worksheet, generate_analysis, generate_deviation_analysis, read_docx
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -242,6 +242,60 @@ def worksheet():
         analysis_params=analysis_params,
         pdf_filename=pdf_filename,
     )
+
+
+@app.route("/api/generate-deviation-analysis", methods=["POST"])
+def api_generate_deviation_analysis():
+    """Generate HAZOP analysis for a single deviation using Opus 4.7 + Master Prompt Library."""
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "No data received"}), 400
+
+    node_ids = data.get("node_ids", [])
+    deviation = data.get("deviation", "")
+    extracted_items = data.get("extracted_items", {})
+
+    if not deviation:
+        return jsonify({"error": "deviation is required"}), 400
+
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+
+    # Load HAZOP Master Prompt Library
+    library_path = os.path.join(base_dir, "frontend", "public", "HAZOP_Master_Prompt_Library_v3.docx")
+    if not os.path.exists(library_path):
+        return jsonify({"error": "HAZOP_Master_Prompt_Library_v3.docx not found in frontend/public/"}), 404
+
+    try:
+        prompt_library_text = read_docx(library_path)
+    except Exception as e:
+        return jsonify({"error": f"Failed to read prompt library: {e}"}), 500
+
+    # Load PDFs for selected nodes
+    pdf_base64_list = []
+    for node_id in node_ids:
+        filename = NODE_PDF_MAP.get(str(node_id))
+        if filename:
+            pdf_path = os.path.join(base_dir, "frontend", "public", filename)
+            if os.path.exists(pdf_path):
+                with open(pdf_path, "rb") as f:
+                    pdf_base64_list.append(base64.b64encode(f.read()).decode("utf-8"))
+
+    if not pdf_base64_list:
+        return jsonify({"error": f"No PDFs found for nodes: {node_ids}. Available: {list(NODE_PDF_MAP.keys())}"}), 404
+
+    try:
+        app.logger.info("Generating Opus analysis for deviation '%s' across %d node(s)...", deviation, len(pdf_base64_list))
+        analysis = generate_deviation_analysis(
+            pdf_base64_list,
+            prompt_library_text,
+            extracted_items,
+            deviation,
+            app.config["ANTHROPIC_API_KEY"],
+        )
+        return jsonify({"analysis": analysis, "deviation": deviation, "status": "success"})
+    except Exception as e:
+        app.logger.error("Deviation analysis failed for '%s': %s", deviation, e)
+        return jsonify({"error": str(e)}), 500
 
 
 @app.route("/api/generate-analysis", methods=["POST"])

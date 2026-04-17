@@ -30,7 +30,7 @@ def extract_hazop_items(pdf_base64, api_key, node_id=None):
     try:
         client = anthropic.Anthropic(api_key=api_key)
         message = client.messages.create(
-            model="claude-sonnet-4-5-20250929",
+            model="claude-sonnet-4-6",
             max_tokens=8192,
             messages=[
                 {
@@ -73,7 +73,7 @@ def generate_causes(instruments_causes, deviation, api_key):
         )
 
         message = client.messages.create(
-            model="claude-sonnet-4-5-20250929",
+            model="claude-sonnet-4-6",
             max_tokens=4096,
             messages=[
                 {
@@ -111,7 +111,7 @@ def generate_worksheet(extracted_items, confirmed_causes, analysis_params, pdf_f
         )
 
         message = client.messages.create(
-            model="claude-sonnet-4-5-20250929",
+            model="claude-sonnet-4-6",
             max_tokens=8192,
             messages=[
                 {
@@ -135,6 +135,52 @@ def generate_worksheet(extracted_items, confirmed_causes, analysis_params, pdf_f
         raise e
 
 
+def generate_deviation_analysis(pdf_base64_list, prompt_library_text, extracted_items, deviation, api_key):
+    """Generate comprehensive HAZOP analysis for a single deviation using Claude Opus 4.7."""
+    client = anthropic.Anthropic(api_key=api_key)
+
+    content = []
+
+    for pdf_b64 in pdf_base64_list:
+        content.append({
+            "type": "document",
+            "source": {
+                "type": "base64",
+                "media_type": "application/pdf",
+                "data": pdf_b64,
+            },
+        })
+
+    content.append({
+        "type": "text",
+        "text": f"""Run HAZOP analysis for the selected deviation: {deviation}.
+
+=== HAZOP MASTER PROMPT LIBRARY ===
+{prompt_library_text}
+
+=== EXTRACTED P&ID DATA (Equipment, Instruments, Safety Devices) ===
+{json.dumps(extracted_items, indent=2)}
+
+=== INSTRUCTION ===
+Using the P&ID drawings above, the methodology from the Master Prompt Library, and the extracted P&ID data, perform a comprehensive HAZOP analysis ONLY for the deviation: {deviation}.
+
+Structure your response with clear sections:
+1. Deviation overview and applicable causes
+2. For each cause: description, intermediate consequence, final consequence, existing safeguards, risk level
+3. Summary of key risks and recommendations
+
+Be thorough and use exact tag numbers from the P&ID data.
+""",
+    })
+
+    message = client.messages.create(
+        model="claude-opus-4-7",
+        max_tokens=16000,
+        messages=[{"role": "user", "content": content}],
+    )
+    return message.content[0].text
+
+
 def read_docx(file_path):
     """Read text from a docx file."""
     doc = docx.Document(file_path)
@@ -153,7 +199,7 @@ def generate_analysis(pdf_base64, prompt_library_text, api_key):
         
         # We pass the P&ID as a document and the prompt library as text
         message = client.messages.create(
-            model="claude-3-5-sonnet-20240620", # Valid sonnet model
+            model="claude-sonnet-4-6",
             max_tokens=8192,
             messages=[
                 {
