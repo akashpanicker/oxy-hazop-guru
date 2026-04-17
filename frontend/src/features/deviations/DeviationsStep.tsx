@@ -1,19 +1,21 @@
 import { useHazopStore } from '@/store/useHazopStore';
 import { Loader2, Settings, Wrench, Shield, ArrowLeft, ArrowRight, AlertCircle } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Checkbox } from '@/components/ui/Checkbox';
 import { Button } from '@/components/ui/Button';
 import React from 'react';
 
 export function DeviationsStep() {
-  const { 
-    selectedDeviations, 
+  const {
+    selectedDeviations,
     setSelectedDeviations,
     otherDeviation,
     setOtherDeviation,
     extractedItems,
+    selectedNodes,
     setCauses,
     setConfirmedCauses,
+    setDeviationAnalyses,
     setStep,
     isLoading,
     loadingMessage,
@@ -45,41 +47,52 @@ export function DeviationsStep() {
   };
 
   const generateReport = async () => {
-    if (selectedDeviations.length === 0 && !otherDeviation) return;
+    const allDeviations = [...selectedDeviations, ...(otherDeviation ? [otherDeviation] : [])];
+    if (allDeviations.length === 0) return;
 
     setError(null);
-    setLoading(true, 'Generating instrument-based causes for selected deviations...');
+    setDeviationAnalyses(null);
+
+    const analyses: Record<string, string> = {};
 
     try {
-      // Call the generate-causes API
-      const response = await fetch('/api/generate-causes', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          deviations: selectedDeviations,
-          other_text: otherDeviation,
-        }),
-      });
+      for (let i = 0; i < allDeviations.length; i++) {
+        const deviation = allDeviations[i];
+        setLoading(true, `Analyzing "${deviation}"… (${i + 1} of ${allDeviations.length})`);
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
-        throw new Error(errorData.error || 'Failed to generate causes');
+        let response: Response;
+        try {
+          response = await fetch('/api/generate-deviation-analysis', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              node_ids: selectedNodes,
+              deviation,
+              extracted_items: extractedItems,
+            }),
+          });
+        } catch {
+          throw new Error('Cannot reach the backend server. Make sure Flask is running on port 5000.');
+        }
+
+        if (!response.ok) {
+          const errData = await response.json().catch(() => ({ error: `Server error ${response.status}` }));
+          throw new Error(errData.error || `Failed to analyze deviation: ${deviation}`);
+        }
+
+        const data = await response.json();
+        analyses[deviation] = data.analysis;
       }
 
-      const data = await response.json();
-      const causesData = data.causes;
-
-      // Store causes in Zustand
-      setCauses(causesData);
-
-      // Auto-confirm all causes (user can review on report step)
-      setConfirmedCauses(causesData);
-
+      setDeviationAnalyses(analyses);
+      // Keep legacy cause state populated so back-navigation works
+      setCauses({});
+      setConfirmedCauses({});
       setLoading(false);
       setStep('report');
     } catch (err: any) {
-      console.error('Cause generation failed:', err);
-      setError(err.message || 'Failed to generate causes. Please try again.');
+      console.error('Analysis failed:', err);
+      setError(err.message || 'Failed to generate analysis. Please try again.');
       setLoading(false);
     }
   };
@@ -173,9 +186,9 @@ export function DeviationsStep() {
           <div className="bg-white rounded-2xl shadow-2xl p-10 max-w-md w-full mx-4 flex flex-col items-center gap-6">
             <div className="w-16 h-16 border-4 border-[#E5E7EB] border-t-[#00539B] rounded-full animate-spin"></div>
             <div className="text-center">
-              <h3 className="text-lg font-semibold text-[#1A1A1A] mb-2">Generating Causes</h3>
+              <h3 className="text-lg font-semibold text-[#1A1A1A] mb-2">Running HAZOP Analysis</h3>
               <p className="text-sm text-[#6B7280] leading-relaxed">{loadingMessage}</p>
-              <p className="text-xs text-[#9CA3AF] mt-3">Analyzing {selectedDeviations.length} deviation(s) with {instrumentCount} instruments...</p>
+              <p className="text-xs text-[#9CA3AF] mt-3">Claude Opus is analyzing the P&ID against the Master Prompt Library…</p>
             </div>
           </div>
         </div>

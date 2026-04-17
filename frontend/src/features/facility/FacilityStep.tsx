@@ -111,14 +111,19 @@ export function FacilityStep() {
         setExtractionProgress({ current: i + 1, total: availableNodes.length, nodeId });
         setLoading(true, `Extracting equipment from ${nodeName}... (${i + 1}/${availableNodes.length})`);
 
-        const response = await fetch('/api/extract-node', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ node_id: nodeId }),
-        });
+        let response: Response;
+        try {
+          response = await fetch('/api/extract-node', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ node_id: nodeId }),
+          });
+        } catch {
+          throw new Error('Cannot reach the backend server. Make sure Flask is running on port 5000 (run: py app.py).');
+        }
 
         if (!response.ok) {
-          const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+          const errorData = await response.json().catch(() => ({ error: `Server error ${response.status} — check Flask logs` }));
           throw new Error(errorData.error || `Failed to extract Node ${nodeId}`);
         }
 

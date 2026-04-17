@@ -43,6 +43,9 @@ interface HazopState {
   worksheetData: any | null;
   setWorksheetData: (data: any) => void;
 
+  deviationAnalyses: Record<string, string> | null;
+  setDeviationAnalyses: (analyses: Record<string, string> | null) => void;
+
   analysisParams: AnalysisParams;
   setAnalysisParams: (params: AnalysisParams) => void;
 
@@ -64,6 +67,7 @@ const initialState = {
   confirmedCauses: null as Record<string, string[]> | null,
   worksheetData: null as any,
   analysisParams: {} as AnalysisParams,
+  deviationAnalyses: null as Record<string, string> | null,
 };
 
 export const useHazopStore = create<HazopState>((set, get) => ({
@@ -101,6 +105,8 @@ export const useHazopStore = create<HazopState>((set, get) => ({
   setWorksheetData: (worksheetData) => set({ worksheetData }),
 
   setAnalysisParams: (analysisParams) => set({ analysisParams }),
+
+  setDeviationAnalyses: (deviationAnalyses) => set({ deviationAnalyses }),
 
   reset: () => set(initialState),
 }));
