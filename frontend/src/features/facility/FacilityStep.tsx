@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { useHazopStore } from '@/store/useHazopStore';
+import { useHazopStore, mergeExtractionResults } from '@/store/useHazopStore';
 import { Button } from '@/components/ui/Button';
-import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, Loader2, AlertCircle } from 'lucide-react';
 
 interface DiagramNode {
   id: string;
@@ -36,13 +36,26 @@ const FLOW_COLORS = {
 };
 
 export function FacilityStep() {
-  const { setStep } = useHazopStore();
+  const {
+    setStep,
+    isLoading,
+    loadingMessage,
+    error,
+    setLoading,
+    setError,
+    selectedNodes,
+    setSelectedNodes,
+    setExtractionResult,
+    clearExtractionResults,
+    setExtractedItems,
+    setPdfFilename,
+  } = useHazopStore();
+
   const [selectedFacility, setSelectedFacility] = useState<string>('');
   const [isOpen, setIsOpen] = useState(false);
   const [loadingNodes, setLoadingNodes] = useState(false);
   const [showNodes, setShowNodes] = useState(false);
-  const [selectedNodes, setSelectedNodes] = useState<string[]>([]);
-  const [viewMode, setViewMode] = useState<'simple' | 'hfd' | 'pid'>('simple');
+  const [extractionProgress, setExtractionProgress] = useState<{ current: number; total: number; nodeId: string }>({ current: 0, total: 0, nodeId: '' });
 
   const facilities = [
     { id: 'constitution', name: 'Constitution', available: true },
@@ -79,7 +92,61 @@ export function FacilityStep() {
     }
   };
 
+  const handleContinue = async () => {
+    if (selectedNodes.length === 0) return;
 
+    setError(null);
+    setLoading(true, 'Starting extraction...');
+    clearExtractionResults();
+
+    const availableNodes = selectedNodes.filter(id =>
+      DIAGRAM_NODES.find(n => n.id === id && n.available)
+    );
+
+    try {
+      // Extract each node sequentially (Claude API takes 15-30s per call)
+      for (let i = 0; i < availableNodes.length; i++) {
+        const nodeId = availableNodes[i];
+        const nodeName = DIAGRAM_NODES.find(n => n.id === nodeId)?.number || `Node ${nodeId}`;
+        setExtractionProgress({ current: i + 1, total: availableNodes.length, nodeId });
+        setLoading(true, `Extracting equipment from ${nodeName}... (${i + 1}/${availableNodes.length})`);
+
+        const response = await fetch('/api/extract-node', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ node_id: nodeId }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+          throw new Error(errorData.error || `Failed to extract Node ${nodeId}`);
+        }
+
+        const result = await response.json();
+        setExtractionResult(nodeId, result);
+      }
+
+      // Merge all extraction results
+      const allResults = useHazopStore.getState().extractionResults;
+      const merged = mergeExtractionResults(allResults);
+      setExtractedItems(merged);
+      setPdfFilename(availableNodes.map(id => `Node ${id}`).join(', '));
+
+      // Also sync to backend session for downstream API calls
+      await fetch('/api/save-items', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(merged),
+      });
+
+      setLoading(false);
+      setStep('equipment');
+    } catch (err: any) {
+      console.error('Extraction failed:', err);
+      setError(err.message || 'Extraction failed. Please try again.');
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="flex flex-col gap-6 w-full max-w-[1500px] mx-auto pt-2 pb-12">
@@ -163,6 +230,20 @@ export function FacilityStep() {
                 </div>
               </div>
             </div>
+
+            {/* Error Alert */}
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3">
+                <AlertCircle size={20} className="text-red-500 shrink-0 mt-0.5" />
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-red-800">Extraction Failed</p>
+                  <p className="text-sm text-red-600 mt-1">{error}</p>
+                </div>
+                <button onClick={() => setError(null)} className="text-red-400 hover:text-red-600">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+              </div>
+            )}
 
             {/* Interaction Canvas — overflow-x allows scroll on narrow screens */}
             <div className="border border-[#E5E7EB] rounded-[12px] shadow-sm overflow-x-auto">
@@ -389,33 +470,41 @@ export function FacilityStep() {
                   })}
                 </div>
 
-                {/* ========== Legend Panel (commented out) ==========
-                <div className="absolute bg-white border border-[#E5E7EB] rounded-[8px] shadow-[0_2px_4px_rgba(0,0,0,0.08)]" style={{ bottom: 40, right: 40, zIndex: 15, padding: '12px 20px' }}>
-                  <div className="text-[11px] font-bold text-[#6B7280] uppercase tracking-widest mb-2">Flow Types:</div>
-                  <div className="flex gap-5">
-                    {[
-                      { color: FLOW_COLORS.GAS, label: 'Gas' },
-                      { color: FLOW_COLORS.OIL, label: 'Oil' },
-                      { color: FLOW_COLORS.PRODUCTION, label: 'Production' },
-                      { color: FLOW_COLORS.FEED, label: 'Feed' },
-                    ].map((item) => (
-                      <div key={item.label} className="flex items-center gap-[8px]">
-                        <svg width="44" height="10" viewBox="0 0 44 10">
-                          <line x1="0" y1="5" x2="34" y2="5" stroke={item.color} strokeWidth="3" strokeLinecap="round" />
-                          <polygon points="34,1 42,5 34,9" fill={item.color} />
-                        </svg>
-                        <span className="text-[13px] text-[#4A4A4A]">{item.label}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                ========== */}
-
               </div>
             </div>
           </div>
         )}
       </div>
+
+      {/* Loading Overlay */}
+      {isLoading && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[2000] flex items-center justify-center">
+          <div className="bg-white rounded-2xl shadow-2xl p-10 max-w-md w-full mx-4 flex flex-col items-center gap-6">
+            <div className="relative">
+              <div className="w-16 h-16 border-4 border-[#E5E7EB] border-t-[#00539B] rounded-full animate-spin"></div>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-[#00539B] font-bold text-sm">
+                  {extractionProgress.total > 0 ? `${extractionProgress.current}/${extractionProgress.total}` : ''}
+                </span>
+              </div>
+            </div>
+            <div className="text-center">
+              <h3 className="text-lg font-semibold text-[#1A1A1A] mb-2">Analyzing P&ID</h3>
+              <p className="text-sm text-[#6B7280] leading-relaxed">{loadingMessage}</p>
+              <p className="text-xs text-[#9CA3AF] mt-3">This may take 15-30 seconds per node</p>
+            </div>
+            {/* Progress bar */}
+            {extractionProgress.total > 0 && (
+              <div className="w-full bg-[#E5E7EB] rounded-full h-2">
+                <div
+                  className="bg-[#00539B] h-2 rounded-full transition-all duration-500"
+                  style={{ width: `${(extractionProgress.current / extractionProgress.total) * 100}%` }}
+                ></div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Bottom Action Bar */}
       <div className="fixed bottom-0 left-0 right-0 h-[72px] bg-white border-t border-[#E5E7EB] flex items-center justify-between px-12 z-[1000] shadow-[0_-2px_8px_rgba(0,0,0,0.04)]">
@@ -433,12 +522,21 @@ export function FacilityStep() {
         </div>
 
         <Button
-          disabled={!selectedFacility || selectedNodes.length === 0}
-          onClick={() => setStep('equipment')}
+          disabled={!selectedFacility || selectedNodes.length === 0 || isLoading}
+          onClick={handleContinue}
           className="bg-oxy-blue text-white font-semibold text-[16px] px-8 py-2.5 rounded-[6px] transition-all hover:bg-[#003D73] disabled:bg-[#E5E7EB] disabled:cursor-not-allowed border-none flex items-center gap-2"
         >
-          Continue to Equipment Review
-          <ArrowRight size={18} />
+          {isLoading ? (
+            <>
+              <Loader2 size={18} className="animate-spin" />
+              Extracting...
+            </>
+          ) : (
+            <>
+              Continue to Equipment Review
+              <ArrowRight size={18} />
+            </>
+          )}
         </Button>
       </div>
     </div>
