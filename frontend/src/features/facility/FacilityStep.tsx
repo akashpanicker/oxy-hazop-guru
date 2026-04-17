@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useHazopStore, mergeExtractionResults } from '@/store/useHazopStore';
 import { Button } from '@/components/ui/Button';
 import { ArrowLeft, ArrowRight, Check, Loader2, AlertCircle } from 'lucide-react';
+import allFieldsImg from '@/assets/all_fields.png';
+
 
 interface DiagramNode {
   id: string;
@@ -165,52 +167,79 @@ export function FacilityStep() {
           </div>
 
           <div className="bg-white rounded-[12px] shadow-[0_1px_3px_rgba(0,0,0,0.1)] p-5 border-none">
-            <div className="flex items-center gap-3 mb-3">
-              <span className="w-7 h-7 rounded-full bg-oxy-blue text-white flex items-center justify-center font-bold text-xs">1</span>
-              <h2 className="text-[16px] font-semibold text-[#1A1A1A]">Select Facility</h2>
-            </div>
-
-            <div className="relative w-full max-w-[600px]">
-              <label className="block text-sm font-medium text-[#4A4A4A] mb-2">Choose the offshore platform you want to analyze</label>
-              <button
-                type="button"
-                className={`w-full h-[56px] px-4 flex items-center justify-between bg-white border rounded-[8px] text-left transition-all
-                  ${isOpen ? 'border-oxy-blue ring-4 ring-oxy-blue/10' : 'border-[#D1D5DB] hover:border-[#9CA3AF]'}
-                `}
-                onClick={() => setIsOpen(!isOpen)}
-              >
-                <span className={`text-[16px] ${selectedFacility ? 'text-[#1A1A1A] font-medium' : 'text-[#9CA3AF]'}`}>
-                  {selectedFacility ? facilities.find(f => f.id === selectedFacility)?.name : 'Select a facility...'}
-                </span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}>
-                  <path d="m6 9 6 6 6-6" />
-                </svg>
-              </button>
-
-              {isOpen && (
-                <div className="absolute top-[calc(100%+8px)] left-0 w-full bg-white border border-[#E5E7EB] rounded-[8px] shadow-xl overflow-hidden z-[1001] animate-in fade-in slide-in-from-top-2 duration-200">
-                  {facilities.map((fac) => (
-                    <button
-                      key={fac.id}
-                      disabled={!fac.available}
-                      className={`w-full px-4 py-3.5 text-left text-[15px] flex items-center justify-between border-b border-[#F3F4F6] last:border-none transition-colors ${fac.available
-                        ? 'hover:bg-[#F9FAFB] cursor-pointer text-[#1A1A1A]'
-                        : 'text-[#9CA3AF] cursor-not-allowed bg-[#F9FAFB]/50'
-                        }`}
-                      onClick={() => handleFacilitySelect(fac.id)}
-                    >
-                      <span>{fac.name}</span>
-                      {selectedFacility === fac.id && (
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00539B" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M20 6 9 17l-5-5" />
-                        </svg>
-                      )}
-                    </button>
-                  ))}
+            <div className="flex flex-col lg:flex-row gap-8 items-start">
+              <div className="flex-1 w-full">
+                <div className="flex items-center gap-3 mb-3">
+                  <span className="w-7 h-7 rounded-full bg-oxy-blue text-white flex items-center justify-center font-bold text-xs">1</span>
+                  <h2 className="text-[16px] font-semibold text-[#1A1A1A]">Select Facility</h2>
                 </div>
-              )}
+
+                <div className="relative w-full max-w-[600px]">
+                  <label className="block text-sm font-medium text-[#4A4A4A] mb-2">Choose the offshore platform you want to analyze</label>
+                  <button
+                    type="button"
+                    className={`w-full h-[56px] px-4 flex items-center justify-between bg-white border rounded-[8px] text-left transition-all
+                      ${isOpen ? 'border-oxy-blue ring-4 ring-oxy-blue/10' : 'border-[#D1D5DB] hover:border-[#9CA3AF]'}
+                    `}
+                    onClick={() => setIsOpen(!isOpen)}
+                  >
+                    <span className={`text-[16px] ${selectedFacility ? 'text-[#1A1A1A] font-medium' : 'text-[#9CA3AF]'}`}>
+                      {selectedFacility ? facilities.find(f => f.id === selectedFacility)?.name : 'Select a facility...'}
+                    </span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}>
+                      <path d="m6 9 6 6 6-6" />
+                    </svg>
+                  </button>
+
+                  {isOpen && (
+                    <div className="absolute top-[calc(100%+8px)] left-0 w-full bg-white border border-[#E5E7EB] rounded-[8px] shadow-xl overflow-hidden z-[1001] animate-in fade-in slide-in-from-top-2 duration-200">
+                      {facilities.map((fac) => (
+                        <button
+                          key={fac.id}
+                          disabled={!fac.available}
+                          className={`w-full px-4 py-3.5 text-left text-[15px] flex items-center justify-between border-b border-[#F3F4F6] last:border-none transition-colors ${fac.available
+                            ? 'hover:bg-[#F9FAFB] cursor-pointer text-[#1A1A1A]'
+                            : 'text-[#9CA3AF] cursor-not-allowed bg-[#F9FAFB]/50'
+                            }`}
+                          onClick={() => handleFacilitySelect(fac.id)}
+                        >
+                          <span>{fac.name}</span>
+                          {selectedFacility === fac.id && (
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00539B" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M20 6 9 17l-5-5" />
+                            </svg>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {selectedFacility && (
+                  <div className="mt-4 max-w-[600px] bg-[#F8FAFC] border border-[#E2E8F0] rounded-[8px] px-4 py-3">
+                    <p className="text-[13px] font-semibold text-[#4A4A4A] mb-2">Contacts</p>
+                    <div className="flex flex-col gap-1">
+                      <p className="text-[13px] text-[#1A1A1A]"><span className="text-[#6B7280]">Risk Engineer:</span> John Pruitt</p>
+                      <p className="text-[13px] text-[#1A1A1A]"><span className="text-[#6B7280]">Process Engineer:</span> Vikram Kalakota</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="w-full lg:w-[480px] shrink-0">
+                <div className="bg-[#F8FAFC] rounded-lg p-2 border border-[#E2E8F0]">
+                  <img
+                    src={allFieldsImg}
+                    alt="All Fields Reference"
+                    className="w-full h-auto rounded shadow-sm hover:scale-[1.02] transition-transform duration-300 cursor-zoom-in"
+                    title="Offshore Facility Reference Map"
+                  />
+                  <p className="text-[11px] text-[#94A3B8] text-center mt-2 font-medium uppercase tracking-wider">Offshore Facility Reference Map</p>
+                </div>
+              </div>
             </div>
           </div>
+
         </div>
       </div>
 

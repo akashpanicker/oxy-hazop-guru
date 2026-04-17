@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useHazopStore } from '@/store/useHazopStore';
 import type { ExtractionResult } from '@/types/hazop';
 import { Button } from '@/components/ui/Button';
-import { Settings, Wrench, Shield, Trash2, Plus, ArrowLeft, ArrowRight, AlertCircle } from 'lucide-react';
+import { Settings, Wrench, Shield, Trash2, Plus, ArrowLeft, ArrowRight, AlertCircle, ExternalLink } from 'lucide-react';
 
 export function EquipmentStep() {
   const {
@@ -174,13 +174,22 @@ export function EquipmentStep() {
 
   return (
     <div className="flex flex-col gap-6 pb-24">
-      <div className="mb-1">
-        <h1 className="text-[20px] font-bold text-[#1A1A1A]">
-          Review Extracted Equipment
-        </h1>
-        <p className="text-[13px] text-[#6B7280] mt-1">
-          Source: {pdfFilename || 'P&ID'} — Review, edit, or add items before proceeding
-        </p>
+      <div className="flex items-start justify-between mb-1">
+        <div>
+          <h1 className="text-[20px] font-bold text-[#1A1A1A]">
+            Review Extracted Equipment
+          </h1>
+          <p className="text-[13px] text-[#6B7280] mt-1">
+            Source: {pdfFilename || 'P&ID'} — Review, edit, or add items before proceeding
+          </p>
+        </div>
+        <button
+          onClick={() => window.open('/nodes', '_blank')}
+          className="flex items-center gap-2 px-4 py-2 text-[13px] font-medium text-[#00539B] border border-[#00539B] rounded-[6px] hover:bg-[#EFF6FF] transition-colors shrink-0"
+        >
+          Open Selected Nodes
+          <ExternalLink size={14} />
+        </button>
       </div>
 
       {/* Error Alert */}

@@ -26,9 +26,7 @@ export function DashboardStep() {
         </div>
 
         <p className="text-[14px] text-[#4A4A4A] leading-[1.6] mb-8 max-w-[700px]">
-          HAZOP GURU automates hazard analysis for offshore platforms.
-          Our AI extracts equipment from P&IDs, suggests deviations, and
-          generates audit-ready reports in minutes.
+          HAZOPGURU is Oxy-GoA’s proprietary AI-assisted HAZOP generation tool. It applies a unique methodology to develop HAZOP Flow Diagrams (HFDs), validated by the Process and Risk team. The platform automates HAZOP analysis, generates worksheets, and enables sensitivity assessments based on CME status.
         </p>
 
         <div className="bg-[#F3F4F6] p-6 rounded-[8px]">
