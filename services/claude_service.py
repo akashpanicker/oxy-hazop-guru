@@ -136,19 +136,14 @@ def generate_worksheet(extracted_items, confirmed_causes, analysis_params, pdf_f
 
 
 def generate_deviation_analysis(pdf_base64_list, prompt_library_text, extracted_items, deviation, api_key):
-    """Generate comprehensive HAZOP analysis for a single deviation using Claude Opus 4.7."""
+    """Generate structured HAZOP worksheet JSON for a single deviation using Claude Opus 4.7."""
     client = anthropic.Anthropic(api_key=api_key)
 
     content = []
-
     for pdf_b64 in pdf_base64_list:
         content.append({
             "type": "document",
-            "source": {
-                "type": "base64",
-                "media_type": "application/pdf",
-                "data": pdf_b64,
-            },
+            "source": {"type": "base64", "media_type": "application/pdf", "data": pdf_b64},
         })
 
     content.append({
@@ -158,18 +153,83 @@ def generate_deviation_analysis(pdf_base64_list, prompt_library_text, extracted_
 === HAZOP MASTER PROMPT LIBRARY ===
 {prompt_library_text}
 
-=== EXTRACTED P&ID DATA (Equipment, Instruments, Safety Devices) ===
+=== EXTRACTED P&ID DATA ===
 {json.dumps(extracted_items, indent=2)}
 
-=== INSTRUCTION ===
-Using the P&ID drawings above, the methodology from the Master Prompt Library, and the extracted P&ID data, perform a comprehensive HAZOP analysis ONLY for the deviation: {deviation}.
+=== TASK ===
+Using the P&ID drawings, Master Prompt Library methodology, and extracted P&ID data above, generate a complete HAZOP worksheet for the deviation: {deviation}.
 
-Structure your response with clear sections:
-1. Deviation overview and applicable causes
-2. For each cause: description, intermediate consequence, final consequence, existing safeguards, risk level
-3. Summary of key risks and recommendations
+Return ONLY valid JSON — no markdown fences, no extra text. Use this exact structure:
 
-Be thorough and use exact tag numbers from the P&ID data.
+{{
+  "deviation": "{deviation}",
+  "design_pressure": "XXXX PSIG",
+  "included_causes": [
+    {{
+      "number": 1,
+      "cause": "TAG-XXXX (description of failure mode, e.g. fails closed)",
+      "intermediate_consequence": "Potential increase in [Equipment Tag] operating pressure from normal to [Max P] PSIG (design pressure: [DP] PSIG). Pressure ratio: [X.XX]x DP.",
+      "paf": {{
+        "scenario_bullets": [
+          "Maximum pressure to reach [Max P] PSIG; design pressure is [DP] PSIG.",
+          "[>2x or <=2x] DP ([X.XX]x): [structural failure statement].",
+          "Pressure >= 100 PSIG: Potential [Jet Fire / Pool Fire] and [VCE / Flash Fire].",
+          "PEC-[1/2/3]: [personnel and asset impact statement]."
+        ],
+        "pec": true,
+        "mitigation_bullets": ["TAG: description of safeguard action"],
+        "cme_names": "TAG1; TAG2; TAG3",
+        "cme_count": 3,
+        "risk_c": 5,
+        "risk_p": 1,
+        "risk_level": "C"
+      }},
+      "pdlor": {{
+        "scenario_bullets": [
+          "Maximum pressure to reach [Max P] PSIG; design pressure is [DP] PSIG.",
+          "[structural impact statement].",
+          "[fire/explosion potential statement].",
+          "Estimated downtime: [N] days. Production loss: $[X]MM + Repair: $[X]MM = Total: $[X]MM. Consequence level [1-5]."
+        ],
+        "mitigation_bullets": ["TAG: description"],
+        "cme_names": "TAG1; TAG2; TAG3; TAG4",
+        "cme_count": 4,
+        "risk_c": 4,
+        "risk_p": 1,
+        "risk_level": "B"
+      }},
+      "ecr": {{
+        "scenario_bullets": [
+          "Maximum pressure to reach [Max P] PSIG; design pressure is [DP] PSIG.",
+          "[structural impact statement].",
+          "[fire/explosion potential statement].",
+          "[liquid release assessment]. Environmental cleanup cost [<$1MM / $X-YMM]. Consequence level [1-5]."
+        ],
+        "mitigation_bullets": ["TAG: description"],
+        "cme_names": "TAG1; TAG2",
+        "cme_count": 2,
+        "risk_c": 1,
+        "risk_p": 1,
+        "risk_level": "A"
+      }}
+    }}
+  ],
+  "excluded_causes": [
+    {{
+      "cause": "cause description",
+      "line_type": "gas or liquid",
+      "max_pressure": 1850,
+      "ratio": 0.87,
+      "rationale": "pressure ratio <= 1.1x design pressure; no credible overpressure"
+    }}
+  ],
+  "cross_referenced_causes": [
+    {{
+      "cause": "cause description",
+      "note": "Liquid cause — refer to High Level deviation"
+    }}
+  ]
+}}
 """,
     })
 
@@ -178,7 +238,8 @@ Be thorough and use exact tag numbers from the P&ID data.
         max_tokens=16000,
         messages=[{"role": "user", "content": content}],
     )
-    return message.content[0].text
+    response_text = message.content[0].text
+    return extract_json_from_response(response_text)
 
 
 def read_docx(file_path):
