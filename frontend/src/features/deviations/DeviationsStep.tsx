@@ -24,7 +24,23 @@ export function DeviationsStep() {
     setError,
   } = useHazopStore();
   
-  const DEVIATION_OPTIONS = ['High Pressure', 'Low Pressure', 'High Flow', 'Low Flow', 'High Temperature', 'Low Temperature'];
+  const DEVIATION_OPTIONS = [
+    'High Pressure',
+    'Low Pressure',
+    'High Level',
+    'Low Level',
+    'High Temperature',
+    'Low Temperature',
+    'No/Low Flow',
+    'More/High Flow',
+    'Reverse/Misdirected Flow',
+    'Tube Leak',
+    'Composition/Contamination',
+    'Leaks (Corrosion/Erosion)',
+    'Human Factors',
+    'Previous Incidents/Learnings',
+    'Other (user types custom)'
+  ];
 
   // Counts from real extraction data
   const majorCount = extractedItems?.major_equipment?.length || 0;
@@ -142,7 +158,7 @@ export function DeviationsStep() {
       <div className="relative">
         {/* Selection Counter */}
         <div className="absolute top-2 right-4 text-[14px] text-slate-500 hidden sm:block">
-          <span className="font-bold text-[18px] text-oxy-blue">{selectedDeviations.length + (otherDeviation ? 1 : 0)}</span> of 6 deviations selected
+          <span className="font-bold text-[18px] text-oxy-blue">{selectedDeviations.length + (otherDeviation ? 1 : 0)}</span> of 15 deviations selected
         </div>
 
         {/* Section Header */}
